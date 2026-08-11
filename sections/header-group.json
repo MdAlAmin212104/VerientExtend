@@ -11,13 +11,6 @@
   "type": "header",
   "name": "t:general.header",
   "sections": {
-    "header": {
-      "type": "header",
-      "settings": {
-        "menu": "",
-        "customer_account_menu": "customer-account-main-menu"
-      }
-    },
     "announcement_bar_Ud3dQj": {
       "type": "announcement-bar",
       "blocks": {
@@ -53,12 +46,19 @@
         "auto_rotate": false,
         "change_slides_speed": 5,
         "background_color": "#121212",
-        "text_color": "#FFFFFF"
+        "text_color": "#ffffff"
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "menu": "",
+        "customer_account_menu": "customer-account-main-menu"
       }
     }
   },
   "order": [
-    "header",
-    "announcement_bar_Ud3dQj"
+    "announcement_bar_Ud3dQj",
+    "header"
   ]
 }
