@@ -13,10 +13,52 @@
   "sections": {
     "header": {
       "type": "header",
-      "settings": {}
+      "settings": {
+        "menu": "",
+        "customer_account_menu": "customer-account-main-menu"
+      }
+    },
+    "announcement_bar_Ud3dQj": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement_EyCwmK": {
+          "type": "announcement",
+          "settings": {
+            "text": "Welcome to our store! Enjoy free shipping on orders over $50.",
+            "link": ""
+          }
+        },
+        "announcement_kxJNc8": {
+          "type": "announcement",
+          "settings": {
+            "text": "New season styles have landed — Shop the collection today.",
+            "link": ""
+          }
+        },
+        "announcement_rGfNLt": {
+          "type": "announcement",
+          "settings": {
+            "text": "Sign up for our newsletter to get 15% off your first purchase.",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "announcement_EyCwmK",
+        "announcement_kxJNc8",
+        "announcement_rGfNLt"
+      ],
+      "name": "Announcement bar",
+      "settings": {
+        "auto_rotate": false,
+        "change_slides_speed": 5,
+        "background_color": "#121212",
+        "text_color": "#FFFFFF"
+      }
     }
   },
   "order": [
-    "header"
-  ],
+    "header",
+    "announcement_bar_Ud3dQj"
+  ]
 }
