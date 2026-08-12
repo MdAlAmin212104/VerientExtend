@@ -8,6 +8,27 @@
     "theme_support_url": "https://support.shopify.com/"
   },
   {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "Cart Type / Add to Cart Behavior",
+        "options": [
+          {
+            "value": "drawer",
+            "label": "Open Slide-out Cart Drawer"
+          },
+          {
+            "value": "page",
+            "label": "Redirect to Cart Page"
+          }
+        ],
+        "default": "drawer"
+      }
+    ]
+  },
+  {
     "name": "t:general.typography",
     "settings": [
       {

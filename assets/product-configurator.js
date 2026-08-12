@@ -646,11 +646,17 @@ class ProductConfiguratorEngine {
       });
 
       if (response.ok) {
-        if (window.cartDrawer) {
-          await window.cartDrawer.refreshCart();
-          window.cartDrawer.open();
-        } else {
+        const cartType = (window.Shopify && window.Shopify.cartType) ? String(window.Shopify.cartType).toLowerCase() : 'drawer';
+        if (cartType === 'page') {
           window.location.href = '/cart';
+        } else {
+          if (!window.cartDrawer && typeof CartDrawer === 'function') {
+            window.cartDrawer = new CartDrawer();
+          }
+          if (window.cartDrawer) {
+            await window.cartDrawer.refreshCart();
+            window.cartDrawer.open();
+          }
         }
       } else {
         const err = await response.json();

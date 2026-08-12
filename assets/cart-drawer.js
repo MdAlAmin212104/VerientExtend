@@ -5,20 +5,21 @@
 
 class CartDrawer {
   constructor() {
-    this.container = document.getElementById('CartDrawerContainer') || document.querySelector('cart-drawer');
-    this.drawer = document.getElementById('CartDrawer') || document.querySelector('.cart-drawer') || document.querySelector('.drawer__inner');
-    this.overlay = document.getElementById('CartDrawerOverlay') || document.getElementById('CartDrawer-Overlay') || document.querySelector('.cart-drawer__overlay');
-    
+    this.getElements();
     this.init();
   }
 
-  init() {
-    if (!this.container) return;
+  getElements() {
+    this.container = document.getElementById('CartDrawerContainer') || document.querySelector('cart-drawer') || document.querySelector('.cart-drawer-container');
+    this.drawer = document.getElementById('CartDrawer') || document.querySelector('.cart-drawer') || document.querySelector('.drawer__inner') || document.querySelector('.cart-drawer__inner');
+    this.overlay = document.getElementById('CartDrawerOverlay') || document.getElementById('CartDrawer-Overlay') || document.querySelector('.cart-drawer__overlay');
+  }
 
+  init() {
     // Global toggle listeners for header cart button and trigger elements
     document.addEventListener('click', (e) => {
-      const trigger = e.target.closest('[data-cart-drawer-toggle], .header__cart-btn, a[href="/cart"]');
-      if (trigger && !e.target.closest('.cart-drawer')) {
+      const trigger = e.target.closest('[data-cart-drawer-toggle], .header__cart-btn, .cart-count-badge');
+      if (trigger && !e.target.closest('.cart-drawer, .cart-drawer-container, cart-drawer')) {
         e.preventDefault();
         this.open();
         return;
@@ -32,18 +33,16 @@ class CartDrawer {
       }
     });
 
-    if (this.overlay) {
-      this.overlay.addEventListener('click', () => this.close());
-    }
-
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && this.isOpen()) {
         this.close();
       }
     });
 
-    // Quantity update and item removal handler
-    this.container.addEventListener('click', (e) => {
+    // Delegate clicks inside cart drawer container
+    document.addEventListener('click', (e) => {
+      if (!this.container || !this.container.contains(e.target)) return;
+
       const qtyBtn = e.target.closest('.js-cart-qty-btn, .quantity__button');
       if (qtyBtn) {
         const input = qtyBtn.closest('.quantity-selector, .quantity, quantity-input')?.querySelector('input');
@@ -70,7 +69,8 @@ class CartDrawer {
     });
 
     // Direct quantity input change handler
-    this.container.addEventListener('change', (e) => {
+    document.addEventListener('change', (e) => {
+      if (!this.container || !this.container.contains(e.target)) return;
       const qtyInput = e.target.closest('.js-cart-qty-input, .quantity__input');
       if (qtyInput) {
         const key = qtyInput.dataset.key || qtyInput.dataset.quantityLineKey;
@@ -80,9 +80,22 @@ class CartDrawer {
         }
       }
     });
+
+    // Intercept standard product add-to-cart form submissions
+    document.addEventListener('submit', (e) => {
+      const form = e.target.closest('form[action*="/cart/add"]');
+      if (form && !form.closest('#ProductConfigurator')) {
+        const cartType = (window.Shopify && window.Shopify.cartType) ? String(window.Shopify.cartType).toLowerCase() : 'drawer';
+        if (cartType === 'drawer') {
+          e.preventDefault();
+          this.addToCart(form);
+        }
+      }
+    });
   }
 
   isOpen() {
+    this.getElements();
     if (!this.container) return false;
     return this.container.getAttribute('data-open') === 'true' || 
            this.container.classList.contains('active') || 
@@ -90,6 +103,7 @@ class CartDrawer {
   }
 
   open() {
+    this.getElements();
     if (!this.container) return;
     this.container.setAttribute('data-open', 'true');
     this.container.classList.add('active', 'is-active');
@@ -99,12 +113,54 @@ class CartDrawer {
   }
 
   close() {
+    this.getElements();
     if (!this.container) return;
     this.container.setAttribute('data-open', 'false');
     this.container.classList.remove('active', 'is-active');
     if (this.drawer) this.drawer.classList.remove('active', 'is-active');
     document.body.removeAttribute('data-cart-open');
     document.body.style.overflow = '';
+  }
+
+  async addToCart(form) {
+    const submitBtn = form.querySelector('[type="submit"]');
+    
+    try {
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.setAttribute('data-loading', 'true');
+      }
+
+      const formData = new FormData(form);
+
+      const response = await fetch(`${window.Shopify ? window.Shopify.routes.root : '/'}cart/add.js`, {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        const cartType = (window.Shopify && window.Shopify.cartType) ? String(window.Shopify.cartType).toLowerCase() : 'drawer';
+        if (cartType === 'page') {
+          window.location.href = '/cart';
+        } else {
+          await this.refreshCart();
+          this.open();
+        }
+      } else {
+        const errorData = await response.json();
+        alert(errorData.description || 'Could not add item to cart.');
+      }
+    } catch (err) {
+      console.error('Error adding to cart:', err);
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.removeAttribute('data-loading');
+      }
+    }
   }
 
   async updateQuantity(key, quantity) {
@@ -129,6 +185,7 @@ class CartDrawer {
 
   async refreshCart() {
     try {
+      this.getElements();
       const rootUrl = window.Shopify ? window.Shopify.routes.root : '/';
       const timestamp = Date.now();
       const cartHtmlResponse = await fetch(`${rootUrl}cart?v=${timestamp}`);

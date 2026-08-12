@@ -20,6 +20,12 @@
     {% # Load and preload the critical CSS %}
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
 
+    {% # Global Theme Settings %}
+    <script>
+      window.Shopify = window.Shopify || {};
+      window.Shopify.cartType = {{ settings.cart_type | default: 'drawer' | json }};
+    </script>
+
     {% # Load Cart Drawer JavaScript %}
     <script src="{{ 'cart-drawer.js' | asset_url }}" defer></script>
 
