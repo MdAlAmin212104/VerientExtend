@@ -227,7 +227,17 @@ class ProductConfiguratorEngine {
         group.querySelectorAll('.configurator-radio-card').forEach(card => {
           const radio = card.querySelector('input[type="radio"]');
           if (radio) {
-            const isChecked = currentSel && String(currentSel.value) === String(radio.value);
+            const radioVal = String(radio.value || '').trim().toLowerCase();
+            const selVal = (currentSel && currentSel.value != null) ? String(currentSel.value).trim().toLowerCase() : '';
+            const selLabel = (currentSel && currentSel.label != null) ? String(currentSel.label).trim().toLowerCase() : '';
+
+            const isChecked = Boolean(
+              currentSel &&
+              radioVal !== '' &&
+              (selVal !== '' || selLabel !== '') &&
+              (selVal === radioVal || selLabel === radioVal)
+            );
+
             if (radio !== activeEl && radio.checked !== isChecked) {
               radio.checked = isChecked;
             }
@@ -336,7 +346,17 @@ class ProductConfiguratorEngine {
           if (field.options) {
             field.options.forEach(opt => {
               const currentSel = this.selections[field.handleField];
-              const isChecked = currentSel && currentSel.value === opt.value;
+              const optVal = String(opt.value || '').trim().toLowerCase();
+              const optLabel = String(opt.label || '').trim().toLowerCase();
+              const selVal = (currentSel && currentSel.value != null) ? String(currentSel.value).trim().toLowerCase() : '';
+              const selLabel = (currentSel && currentSel.label != null) ? String(currentSel.label).trim().toLowerCase() : '';
+
+              const isChecked = Boolean(
+                currentSel &&
+                optVal !== '' &&
+                (selVal !== '' || selLabel !== '') &&
+                (selVal === optVal || selLabel === optVal || selVal === optLabel)
+              );
               
               radioCardsHtml += `
                 <label class="configurator-radio-card ${isChecked ? 'is-selected' : ''} ${!isEnabled ? 'is-disabled' : ''}">
@@ -354,7 +374,10 @@ class ProductConfiguratorEngine {
           // Event listeners for radio inputs
           fieldGroup.querySelectorAll('input[type="radio"]').forEach(radio => {
             radio.addEventListener('change', () => {
-              const opt = field.options.find(o => String(o.value) === String(radio.value));
+              const opt = field.options.find(o => 
+                String(o.value).trim().toLowerCase() === String(radio.value).trim().toLowerCase() ||
+                String(o.label).trim().toLowerCase() === String(radio.value).trim().toLowerCase()
+              );
               if (opt) {
                 this.selections[field.handleField] = {
                   value: opt.value,
@@ -373,7 +396,17 @@ class ProductConfiguratorEngine {
           if (field.options) {
             field.options.forEach(opt => {
               const currentSel = this.selections[field.handleField];
-              const isSelected = currentSel && String(currentSel.value) === String(opt.value);
+              const optVal = String(opt.value || '').trim().toLowerCase();
+              const optLabel = String(opt.label || '').trim().toLowerCase();
+              const selVal = (currentSel && currentSel.value != null) ? String(currentSel.value).trim().toLowerCase() : '';
+              const selLabel = (currentSel && currentSel.label != null) ? String(currentSel.label).trim().toLowerCase() : '';
+
+              const isSelected = Boolean(
+                currentSel &&
+                optVal !== '' &&
+                (selVal !== '' || selLabel !== '') &&
+                (selVal === optVal || selLabel === optVal || selVal === optLabel)
+              );
               const priceText = opt.price_adjustment ? ` (+${this.formatMoney(opt.price_adjustment)})` : '';
               selectHtml += `<option value="${this.escapeHtml(opt.value)}" ${isSelected ? 'selected' : ''}>${this.escapeHtml(opt.label)}${priceText}</option>`;
             });
@@ -383,7 +416,10 @@ class ProductConfiguratorEngine {
 
           const selectEl = fieldGroup.querySelector('select');
           selectEl.addEventListener('change', () => {
-            const opt = field.options.find(o => String(o.value) === String(selectEl.value));
+            const opt = field.options.find(o => 
+              String(o.value).trim().toLowerCase() === String(selectEl.value).trim().toLowerCase() ||
+              String(o.label).trim().toLowerCase() === String(selectEl.value).trim().toLowerCase()
+            );
             if (opt) {
               this.selections[field.handleField] = {
                 value: opt.value,

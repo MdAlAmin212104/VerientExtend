@@ -1,31 +1,38 @@
 {% comment %}
-  Multi-Step Product Configurator Snippet
-  Reads Metaobject architecture from product.metafields.custom.configurator.value
+  Multi-Step Product Configurator Liquid Template
+  Powered by Shopify Metaobjects (custom.configurator)
 {% endcomment %}
 
-{% assign configurator = product.metafields.custom.configurator.value %}
+{% assign configurator = product.metafields.custom.configurator.value | default: product.metafields.custom.configurator %}
 
 {% if configurator != blank %}
   {% assign config_active = configurator.active.value %}{% if config_active == nil %}{% assign config_active = configurator.active %}{% endif %}
-
   {% unless config_active == false %}
+    {{ 'product-configurator.css' | asset_url | stylesheet_tag }}
+    <script src="{{ 'product-configurator.js' | asset_url }}" defer></script>
+
     <div class="product-configurator" id="ProductConfigurator" data-product-id="{{ product.id }}">
-      <div class="configurator-header">
-        <h2 class="configurator-title">{{ configurator.name.value | default: configurator.name | default: 'Customize Your Order' }}</h2>
-        {% assign config_desc = configurator.description.value | default: configurator.description %}
-        {% if config_desc != blank %}
-          <p class="configurator-description">{{ config_desc }}</p>
-        {% endif %}
+      <!-- Configurator Title & Description -->
+      {% assign config_title = configurator.name.value | default: configurator.name %}
+      {% assign config_desc = configurator.description.value | default: configurator.description %}
+      
+      {% if config_title != blank %}
+        <div class="configurator-header">
+          <h2 class="configurator-title">{{ config_title }}</h2>
+          {% if config_desc != blank %}
+            <p class="configurator-description">{{ config_desc }}</p>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <!-- Step Navigation Bar -->
+      <div class="configurator-steps-nav" id="ConfiguratorStepsNav">
+        <!-- Steps tabs rendered dynamically by JS -->
       </div>
 
-      <!-- Step Navigation Header -->
-      <div class="configurator-steps-nav" id="ConfiguratorStepsNav" role="tablist" aria-label="Configuration Steps">
-        <!-- Rendered dynamically by JS -->
-      </div>
-
-      <!-- Completed Steps Summary List -->
+      <!-- Completed Steps Summary Cards -->
       <div class="configurator-completed-summaries" id="ConfiguratorCompletedSummaries">
-        <!-- Rendered dynamically by JS when steps are completed -->
+        <!-- Completed step summary cards rendered dynamically by JS -->
       </div>
 
       <!-- Active Step Fields Container -->
@@ -92,9 +99,17 @@
                         {% for option in options_list %}
                           {% assign opt_active = option.active.value %}{% if opt_active == nil %}{% assign opt_active = option.active %}{% endif %}
                           {% unless opt_active == false %}
+                            {% assign raw_label_obj = option.label.value | default: option.label %}
+                            {% assign raw_label = raw_label_obj.value | default: raw_label_obj | append: '' %}
+                            {% assign raw_val_obj = option.value.value | default: option.value %}
+                            {% assign raw_val = raw_val_obj.value | default: raw_val_obj | append: '' %}
+
+                            {% if raw_val == blank or raw_val contains 'Drop' or raw_val == 'true' or raw_val == 'false' %}
+                              {% assign raw_val = raw_label %}
+                            {% endif %}
                             {
-                              "label": {{ option.label.value | default: option.label | json }},
-                              "value": {{ option.value.value | default: option.value | default: option.label.value | default: option.label | json }},
+                              "label": {{ raw_label | json }},
+                              "value": {{ raw_val | json }},
                               "description": {{ option.description.value | default: option.description | json }},
                               "price_adjustment": {{ option.price_adjustment.value | default: option.price_adjustment | default: 0 | plus: 0 }},
                               "sort_order": {{ option.sort_order.value | default: option.sort_order | default: forloop.index | plus: 0 }}
