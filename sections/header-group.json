@@ -38,7 +38,7 @@
         "announcement_HMTDMN": {
           "type": "announcement",
           "settings": {
-            "text": "Welcome to our store!",
+            "text": "Welcome store!",
             "link": ""
           }
         }
