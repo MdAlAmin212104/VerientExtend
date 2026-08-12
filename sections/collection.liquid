@@ -79,15 +79,30 @@
               {% endif %}
             </a>
 
-            <!-- Quick Add to Cart Form -->
+            <!-- Quick Add to Cart Form or Configure Product CTA -->
             {% if product.available %}
-              <form action="{{ routes.cart_url }}/add" method="post" class="product-card__quick-add-form">
-                <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-                <button type="submit" class="btn btn-primary product-card__quick-add-btn" aria-label="Add {{ product.title | escape }} to cart">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-                  <span>Quick Add</span>
-                </button>
-              </form>
+              {% assign card_has_configurator = false %}
+              {% if product.metafields.custom.configurator.value != blank %}
+                {% assign card_config_meta = product.metafields.custom.configurator.value %}
+                {% assign card_config_active = card_config_meta.active.value %}{% if card_config_active == nil %}{% assign card_config_active = card_config_meta.active %}{% endif %}
+                {% unless card_config_active == false %}
+                  {% assign card_has_configurator = true %}
+                {% endunless %}
+              {% endif %}
+
+              {% if card_has_configurator %}
+                <a href="{{ product.url }}" class="btn btn-secondary product-card__quick-add-btn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                  <span>Configure Product</span>
+                </a>
+              {% else %}
+                <form action="{{ routes.cart_url }}/add" method="post" class="product-card__quick-add-form">
+                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                  <button type="submit" class="btn btn-primary product-card__quick-add-btn" aria-label="Add {{ product.title | escape }} to cart">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                    <span>Quick Add</span>
+                  </button>
+                </form>
+              {% endif %}
             {% else %}
               <button class="btn btn-secondary product-card__quick-add-btn" disabled>Out of Stock</button>
             {% endif %}

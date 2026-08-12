@@ -75,6 +75,26 @@
                     <span class="cart-item-variant">{{ item.variant.title }}</span>
                   {% endunless %}
 
+                  {% if item.properties != empty %}
+                    <div class="cart-item__configuration" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:0.65rem 0.85rem; margin:0.4rem 0 0.65rem; max-width:380px;">
+                      <span class="cart-item__config-title" style="display:block; font-size:0.75rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:#334155; margin-bottom:0.35rem;">
+                        Configuration
+                      </span>
+                      <div class="cart-item__config-list" style="display:flex; flex-direction:column; gap:0.25rem; font-size:0.825rem; color:#0f172a; line-height:1.45;">
+                        {% for property in item.properties %}
+                          {% assign p_key = property.first %}
+                          {% assign p_val = property.last %}
+                          {% assign p_first_char = p_key | slice: 0, 1 %}
+                          {% if p_val != blank and p_first_char != '_' %}
+                            <div class="cart-item__config-item">
+                              <strong style="color:#0f172a;">{{ p_key }}:</strong> {{ p_val }}
+                            </div>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  {% endif %}
+
                   <a href="{{ item.url_to_remove }}" class="cart-item-remove-link">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                     Remove
@@ -82,10 +102,16 @@
                 </div>
               </div>
 
+              {% assign configured_unit_price = item.properties['Configured Unit Price'] | default: item.properties['Configured Price'] %}
               <div class="col-price cart-item-price-col">
-                <span class="cart-item-price">{{ item.final_price | money }}</span>
-                {% if item.original_price > item.final_price %}
-                  <s class="cart-item-original-price">{{ item.original_price | money }}</s>
+                {% if configured_unit_price != blank %}
+                  <span class="cart-item-price" style="font-weight: 800; color: #111827;">{{ configured_unit_price }}</span>
+                  <div style="font-size:0.75rem; color:#6b7280;">(Base Variant: {{ item.final_price | money }})</div>
+                {% else %}
+                  <span class="cart-item-price">{{ item.final_price | money }}</span>
+                  {% if item.original_price > item.final_price %}
+                    <s class="cart-item-original-price">{{ item.original_price | money }}</s>
+                  {% endif %}
                 {% endif %}
               </div>
 
@@ -98,7 +124,19 @@
               </div>
 
               <div class="col-total cart-item-total-col">
-                <span class="cart-item-line-total">{{ item.final_line_price | money }}</span>
+                {% if configured_unit_price != blank %}
+                  <span class="cart-item-line-total" style="font-weight: 800; color: #111827;">
+                    {% assign price_val = configured_unit_price | remove: '$' | remove: ',' | plus: 0 %}
+                    {% if price_val > 0 %}
+                      {% assign line_total = price_val | times: item.quantity %}
+                      ${{ line_total | number_with_delimiter }}
+                    {% else %}
+                      {{ configured_unit_price }}
+                    {% endif %}
+                  </span>
+                {% else %}
+                  <span class="cart-item-line-total">{{ item.final_line_price | money }}</span>
+                {% endif %}
               </div>
             </div>
           {% endfor %}

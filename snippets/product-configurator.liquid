@@ -1,0 +1,139 @@
+{% comment %}
+  Multi-Step Product Configurator Snippet
+  Reads Metaobject architecture from product.metafields.custom.configurator.value
+{% endcomment %}
+
+{% assign configurator = product.metafields.custom.configurator.value %}
+
+{% if configurator != blank %}
+  {% assign config_active = configurator.active.value %}{% if config_active == nil %}{% assign config_active = configurator.active %}{% endif %}
+
+  {% unless config_active == false %}
+    <div class="product-configurator" id="ProductConfigurator" data-product-id="{{ product.id }}">
+      <div class="configurator-header">
+        <h2 class="configurator-title">{{ configurator.name.value | default: configurator.name | default: 'Customize Your Order' }}</h2>
+        {% assign config_desc = configurator.description.value | default: configurator.description %}
+        {% if config_desc != blank %}
+          <p class="configurator-description">{{ config_desc }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Step Navigation Header -->
+      <div class="configurator-steps-nav" id="ConfiguratorStepsNav" role="tablist" aria-label="Configuration Steps">
+        <!-- Rendered dynamically by JS -->
+      </div>
+
+      <!-- Completed Steps Summary List -->
+      <div class="configurator-completed-summaries" id="ConfiguratorCompletedSummaries">
+        <!-- Rendered dynamically by JS when steps are completed -->
+      </div>
+
+      <!-- Active Step Fields Container -->
+      <div class="configurator-active-step-container" id="ConfiguratorActiveStepContainer">
+        <!-- Active step fields rendered dynamically by JS -->
+      </div>
+
+      <!-- Quantity Selector inside Configurator -->
+      <div class="configurator-quantity-wrapper" style="margin-bottom: 1.5rem;">
+        <label for="ConfiguratorQuantityInput" class="form-label" style="font-size:0.875rem; font-weight:700; margin-bottom:0.4rem; display:block;">Quantity</label>
+        <div class="quantity-selector">
+          <button type="button" class="quantity-btn" id="ConfigQtyDecrease">−</button>
+          <input type="number" id="ConfiguratorQuantityInput" name="quantity" min="1" value="1" class="quantity-input">
+          <button type="button" class="quantity-btn" id="ConfigQtyIncrease">+</button>
+        </div>
+      </div>
+
+      <!-- Live Configured Total Price Footer -->
+      <div class="configurator-footer">
+        <div class="configurator-price-box">
+          <span class="configurator-price-label">CONFIGURED TOTAL:</span>
+          <span class="configurator-price-amount" id="ConfiguratorLiveTotal">{{ product.selected_or_first_available_variant.price | money }}</span>
+        </div>
+
+        <div class="configurator-actions">
+          <button type="button" class="btn btn-secondary" id="ConfiguratorPrevBtn" style="display: none;">Back</button>
+          <button type="button" class="btn btn-primary" id="ConfiguratorNextBtn">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    {% comment %}
+      JSON Payload Export for Client-Side JS Rule Engine & Multi-Step Logic
+    {% endcomment %}
+    <script id="ConfiguratorDataJSON" type="application/json">
+      {
+        "name": {{ configurator.name.value | default: configurator.name | json }},
+        "handleConfigurator": {{ configurator.handleConfigurator.value | default: configurator.handleConfigurator | json }},
+        "description": {{ configurator.description.value | default: configurator.description | json }},
+        "steps": [
+          {% assign steps_list = configurator.steps.value | default: configurator.steps %}
+          {% for step in steps_list %}
+            {% assign step_active = step.active.value %}{% if step_active == nil %}{% assign step_active = step.active %}{% endif %}
+            {% unless step_active == false %}
+              {
+                "title": {{ step.title.value | default: step.title | json }},
+                "handleStep": {{ step.handleStep.value | default: step.handleStep | json }},
+                "step_number": {{ step.step_number.value | default: step.step_number | default: forloop.index | plus: 0 }},
+                "description": {{ step.description.value | default: step.description | json }},
+                "fields": [
+                  {% assign fields_list = step.fields.value | default: step.fields %}
+                  {% for field in fields_list %}
+                    {
+                      "label": {{ field.label.value | default: field.label | json }},
+                      "handleField": {{ field.handleField.value | default: field.handleField | default: field.label.value | default: field.label | json }},
+                      "field_type": {{ field.field_type.value | default: field.field_type | json }},
+                      "requiredField": {% assign req = field.requiredField.value %}{% if req == nil %}{% assign req = field.requiredField %}{% endif %}{% if req == true or req == 'true' %}true{% else %}false{% endif %},
+                      "description": {{ field.description.value | default: field.description | json }},
+                      "placeholder": {{ field.placeholder.value | default: field.placeholder | json }},
+                      "default_value": {{ field.default_value.value | default: field.default_value | json }},
+                      "sort_order": {{ field.sort_order.value | default: field.sort_order | default: forloop.index | plus: 0 }},
+                      "options": [
+                        {% assign options_list = field.options.value | default: field.options %}
+                        {% for option in options_list %}
+                          {% assign opt_active = option.active.value %}{% if opt_active == nil %}{% assign opt_active = option.active %}{% endif %}
+                          {% unless opt_active == false %}
+                            {
+                              "label": {{ option.label.value | default: option.label | json }},
+                              "value": {{ option.value.value | default: option.value | default: option.label.value | default: option.label | json }},
+                              "description": {{ option.description.value | default: option.description | json }},
+                              "price_adjustment": {{ option.price_adjustment.value | default: option.price_adjustment | default: 0 | plus: 0 }},
+                              "sort_order": {{ option.sort_order.value | default: option.sort_order | default: forloop.index | plus: 0 }}
+                            }{% unless forloop.last %},{% endunless %}
+                          {% endunless %}
+                        {% endfor %}
+                      ]
+                    }{% unless forloop.last %},{% endunless %}
+                  {% endfor %}
+                ]
+              }{% unless forloop.last %},{% endunless %}
+            {% endunless %}
+          {% endfor %}
+        ],
+        "rules": [
+          {% assign rules_list = configurator.rules.value | default: configurator.rules %}
+          {% for rule in rules_list %}
+            {% assign rule_active = rule.active.value %}{% if rule_active == nil %}{% assign rule_active = rule.active %}{% endif %}
+            {% unless rule_active == false %}
+              {% comment %} Resolve condition_field reference or string {% endcomment %}
+              {% assign cond_obj = rule.condition_field.value | default: rule.condition_field %}
+              {% assign cond_str = cond_obj.handleField.value | default: cond_obj.handleField | default: cond_obj.label.value | default: cond_obj.label | default: cond_obj %}
+
+              {% comment %} Resolve target_field reference or string {% endcomment %}
+              {% assign target_obj = rule.target_field.value | default: rule.target_field %}
+              {% assign target_str = target_obj.handleField.value | default: target_obj.handleField | default: target_obj.label.value | default: target_obj.label | default: target_obj %}
+
+              {
+                "name": {{ rule.name.value | default: rule.name | json }},
+                "condition_field": {{ cond_str | json }},
+                "operatorRule": {{ rule.operatorRule.value | default: rule.operatorRule | json }},
+                "condition_value": {{ rule.condition_value.value | default: rule.condition_value | json }},
+                "actionRule": {{ rule.actionRule.value | default: rule.actionRule | json }},
+                "target_field": {{ target_str | json }}
+              }{% unless forloop.last %},{% endunless %}
+            {% endunless %}
+          {% endfor %}
+        ]
+      }
+    </script>
+  {% endunless %}
+{% endif %}

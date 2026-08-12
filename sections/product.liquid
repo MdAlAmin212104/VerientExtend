@@ -2,6 +2,11 @@
   Professional Product Details Section inspired by Shopify Dawn theme
 {% endcomment %}
 
+{% if product.metafields.custom.configurator.value != blank %}
+  {{ 'product-configurator.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'product-configurator.js' | asset_url }}" defer></script>
+{% endif %}
+
 <section class="product-page-section">
   <!-- Breadcrumb Navigation -->
   <nav class="product-breadcrumb" aria-label="Breadcrumb">
@@ -60,6 +65,13 @@
           </div>
         </div>
       {% endif %}
+
+      {% assign vimeo_id = product.metafields.custom.vimeo_video.value | default: product.metafields.custom.vimeo_video %}
+      {% if vimeo_id != blank %}
+        <div class="product-vimeo-embed" style="margin-top: 1.5rem; aspect-ratio: 16/9; width: 100%; border-radius: var(--radius-lg, 12px); overflow: hidden; border: 1px solid var(--color-border, #e5e7eb);">
+          <iframe src="https://player.vimeo.com/video/{{ vimeo_id }}" width="100%" height="100%" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Product Video"></iframe>
+        </div>
+      {% endif %}
     </div>
 
     <!-- Right Column: Product Info & Form -->
@@ -93,59 +105,85 @@
 
       <p class="product-tax-note">Tax included. Shipping calculated at checkout.</p>
 
-      <!-- Add to Cart Form -->
-      <div class="product-form-container">
-        {% form 'product', product, id: 'AddToCartForm', class: 'product-form' %}
-          <!-- Variant Selector -->
-          {% unless product.has_only_default_variant %}
-            <div class="product-variants">
-              <label for="Option-Variant-Select" class="form-label">Select Option</label>
-              <div class="select-wrapper">
-                <select name="id" id="Option-Variant-Select" class="form-select js-variant-selector">
-                  {% for variant in product.variants %}
-                    {% assign var_image = variant.featured_image | default: variant.image %}
-                    <option
-                      value="{{ variant.id }}"
-                      {% if variant == current_variant %}selected="selected"{% endif %}
-                      data-price="{{ variant.price | money }}"
-                      data-compare-price="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money }}{% endif %}"
-                      data-available="{{ variant.available }}"
-                      data-image="{% if var_image %}{{ var_image | image_url: width: 1200 }}{% endif %}"
-                    >
-                      {{ variant.title }} - {{ variant.price | money }} {% unless variant.available %}(Out of Stock){% endunless %}
-                    </option>
-                  {% endfor %}
-                </select>
-                <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              </div>
-            </div>
-          {% else %}
-            <input type="hidden" name="id" value="{{ current_variant.id }}">
-          {% endunless %}
-
-          <!-- Quantity Selector -->
-          <div class="product-quantity">
-            <label for="Quantity-Input" class="form-label">Quantity</label>
-            <div class="quantity-selector">
-              <button type="button" class="quantity-btn" id="QtyDecrease">−</button>
-              <input type="number" id="Quantity-Input" name="quantity" min="1" value="1" class="quantity-input">
-              <button type="button" class="quantity-btn" id="QtyIncrease">+</button>
-            </div>
-          </div>
-
-          <!-- Buttons -->
-          <div class="product-actions">
-            <button type="submit" name="add" id="AddToCartBtn" class="btn btn-primary btn-full product-add-btn" {% unless current_variant.available %}disabled{% endunless %}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-              <span id="AddToCartText">{% if current_variant.available %}Add to Cart{% else %}Out of Stock{% endif %}</span>
-            </button>
-
-            <div class="product-buy-now" id="BuyNowWrapper" {% unless current_variant.available %}style="display:none;"{% endunless %}>
-              {{ form | payment_button }}
-            </div>
-          </div>
-        {% endform %}
+      <!-- Estimated Shipping Lead Time -->
+      {% assign lead_time = product.metafields.custom.lead_time.value | default: 'Standard Shipping (2-5 Business Days)' %}
+      <div class="product-lead-time-box" style="display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 1.5rem; font-size: 0.875rem; color: #334155;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <span>Estimated Delivery: <strong>{{ lead_time }}</strong></span>
       </div>
+
+      {% unless product.available %}
+        <div class="product-unavailable-message" style="padding: 1.5rem; background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; color: #991b1b; font-weight: 700; text-align: center; margin-bottom: 2rem;">
+          Currently Unavailable
+        </div>
+      {% else %}
+        {% assign has_configurator = false %}
+        {% if product.metafields.custom.configurator.value != blank %}
+          {% assign config_meta = product.metafields.custom.configurator.value %}
+          {% assign config_active = config_meta.active.value %}{% if config_active == nil %}{% assign config_active = config_meta.active %}{% endif %}
+          {% unless config_active == false %}
+            {% assign has_configurator = true %}
+          {% endunless %}
+        {% endif %}
+
+        <!-- Add to Cart Form & Optional Multi-Step Configurator -->
+        <div class="product-form-container">
+          {% form 'product', product, id: 'AddToCartForm', class: 'product-form' %}
+            <!-- Variant Selector -->
+            {% unless product.has_only_default_variant %}
+              <div class="product-variants">
+                <label for="Option-Variant-Select" class="form-label">Select Option</label>
+                <div class="select-wrapper">
+                  <select name="id" id="Option-Variant-Select" class="form-select js-variant-selector">
+                    {% for variant in product.variants %}
+                      {% assign var_image = variant.featured_image | default: variant.image %}
+                      <option
+                        value="{{ variant.id }}"
+                        {% if variant == current_variant %}selected="selected"{% endif %}
+                        data-price="{{ variant.price | money }}"
+                        data-compare-price="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money }}{% endif %}"
+                        data-available="{{ variant.available }}"
+                        data-image="{% if var_image %}{{ var_image | image_url: width: 1200 }}{% endif %}"
+                      >
+                        {{ variant.title }} - {{ variant.price | money }} {% unless variant.available %}(Out of Stock){% endunless %}
+                      </option>
+                    {% endfor %}
+                  </select>
+                  <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+              </div>
+            {% else %}
+              <input type="hidden" name="id" value="{{ current_variant.id }}">
+            {% endunless %}
+
+            {% if has_configurator %}
+              <!-- Dynamic Multi-Step Configurator (Replaces standard Add to Cart & Buy It Now buttons) -->
+              {% render 'product-configurator' %}
+            {% else %}
+              <!-- Standard Quantity Selector & Buttons for NON-Configurable Products -->
+              <div class="product-quantity">
+                <label for="Quantity-Input" class="form-label">Quantity</label>
+                <div class="quantity-selector">
+                  <button type="button" class="quantity-btn" id="QtyDecrease">−</button>
+                  <input type="number" id="Quantity-Input" name="quantity" min="1" value="1" class="quantity-input">
+                  <button type="button" class="quantity-btn" id="QtyIncrease">+</button>
+                </div>
+              </div>
+
+              <div class="product-actions">
+                <button type="submit" name="add" id="AddToCartBtn" class="btn btn-primary btn-full product-add-btn" {% unless current_variant.available %}disabled{% endunless %}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                  <span id="AddToCartText">{% if current_variant.available %}Add to Cart{% else %}Out of Stock{% endif %}</span>
+                </button>
+
+                <div class="product-buy-now" id="BuyNowWrapper" {% unless current_variant.available %}style="display:none;"{% endunless %}>
+                  {{ form | payment_button }}
+                </div>
+              </div>
+            {% endif %}
+          {% endform %}
+        </div>
+      {% endunless %}
 
       <!-- Trust Features Badge Grid -->
       <div class="product-trust-badges">
