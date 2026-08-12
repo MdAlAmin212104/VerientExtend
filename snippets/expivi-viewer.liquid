@@ -1,0 +1,218 @@
+{% comment %}
+  Expivi 3D Product Viewer Component
+  Checks if Expivi 3D visualization is configured for this product via:
+  - product.metafields.expivi.project_id
+  - product.metafields.custom.expivi_project_id
+  - product.metafields.custom.expivi
+  - Product tag 'expivi-3d' or '3d-viewer' or 'expivi'
+{% endcomment %}
+
+{% assign expivi_project_id = product.metafields.expivi.project_id.value | default: product.metafields.expivi.project_id %}
+{% if expivi_project_id == blank %}
+  {% assign expivi_project_id = product.metafields.custom.expivi_project_id.value | default: product.metafields.custom.expivi_project_id %}
+{% endif %}
+{% if expivi_project_id == blank %}
+  {% assign expivi_project_id = product.metafields.custom.expivi.value | default: product.metafields.custom.expivi %}
+{% endif %}
+
+{% assign has_expivi_tag = false %}
+{% if product.tags contains 'expivi-3d' or product.tags contains '3d-viewer' or product.tags contains 'expivi' %}
+  {% assign has_expivi_tag = true %}
+{% endif %}
+
+{% assign is_expivi_enabled = false %}
+{% if expivi_project_id != blank or has_expivi_tag %}
+  {% assign is_expivi_enabled = true %}
+{% endif %}
+
+{% if is_expivi_enabled %}
+  <div class="expivi-3d-wrapper" id="ExpiviViewerWrapper" data-product-id="{{ product.id }}" data-project-id="{{ expivi_project_id | escape }}">
+    <div class="expivi-3d-container">
+      <div class="expivi-header-bar">
+        <span class="expivi-badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          3D Interactive Viewer (Expivi)
+        </span>
+        <span class="expivi-ar-hint">360° Drag & Rotate</span>
+      </div>
+
+      {% if expivi_project_id != blank and expivi_project_id != 'demo' %}
+        {% comment %}
+          LIVE EXPIVI SDK EMBED
+          When live Expivi project ID is configured in metafields:
+        {% endcomment %}
+        <div id="expivi-canvas-holder" class="expivi-canvas-holder"></div>
+        <script src="https://viewer.expivi.net/bundle/expivi-viewer.js" defer></script>
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.Expivi) {
+              window.expiviViewer = new window.Expivi.Viewer({
+                container: document.getElementById('expivi-canvas-holder'),
+                projectId: {{ expivi_project_id | json }},
+                productId: {{ product.id | json }},
+                onInit: function() {
+                  console.log('Expivi 3D Viewer initialized successfully for product {{ product.id }}');
+                }
+              });
+            }
+          });
+        </script>
+      {% else %}
+        {% comment %}
+          PLACEHOLDER IFRAME & INTERACTIVE 3D CANVAS MOCKUP
+          Used when live Expivi account credentials are pending or in testing environment.
+        {% endcomment %}
+        <div class="expivi-iframe-placeholder">
+          <iframe 
+            id="ExpiviViewerIframe"
+            src="https://viewer.expivi.net/viewer/demo" 
+            title="Expivi 3D Product Viewer"
+            class="expivi-iframe"
+            allow="fullscreen; vr; ar; accelerometer; gyroscope"
+            loading="lazy">
+          </iframe>
+          <div class="expivi-overlay-fallback" id="ExpiviOverlayFallback">
+            <div class="expivi-3d-cube-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            </div>
+            <h3>Expivi 3D Interactive Viewer</h3>
+            <p>Click below to launch full 360° interactive mode</p>
+            <button type="button" class="btn btn-primary expivi-launch-btn" onclick="document.getElementById('ExpiviOverlayFallback').style.display='none'">
+              Launch 3D Experience
+            </button>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="expivi-controls-toolbar">
+        <button type="button" class="expivi-control-btn" title="Rotate 360°">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+          360°
+        </button>
+        <button type="button" class="expivi-control-btn" title="Reset Camera">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+          Reset View
+        </button>
+        <button type="button" class="expivi-control-btn" onclick="if(document.fullscreenElement){document.exitFullscreen();}else{document.getElementById('ExpiviViewerWrapper').requestFullscreen();}" title="Fullscreen Mode">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+          Fullscreen
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .expivi-3d-wrapper {
+      margin-top: 1.5rem;
+      border-radius: var(--radius-lg, 12px);
+      overflow: hidden;
+      border: 1px solid var(--color-border, #e5e7eb);
+      background: #f9fafb;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    .expivi-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      background: #1e293b;
+      color: #ffffff;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    .expivi-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #38bdf8;
+    }
+    .expivi-ar-hint {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      background: rgba(255,255,255,0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .expivi-iframe-placeholder {
+      position: relative;
+      width: 100%;
+      height: 420px;
+      background: #f1f5f9;
+    }
+    .expivi-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .expivi-canvas-holder {
+      width: 100%;
+      height: 420px;
+      background: #0f172a;
+    }
+    .expivi-overlay-fallback {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(15,23,42,0.92), rgba(30,41,59,0.95));
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      text-align: center;
+      z-index: 5;
+    }
+    .expivi-3d-cube-icon {
+      color: #38bdf8;
+      margin-bottom: 1rem;
+      animation: pulse3d 2.5s infinite ease-in-out;
+    }
+    @keyframes pulse3d {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.08) rotate(5deg); }
+    }
+    .expivi-overlay-fallback h3 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #ffffff;
+    }
+    .expivi-overlay-fallback p {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      margin-bottom: 1.5rem;
+    }
+    .expivi-launch-btn {
+      padding: 0.7rem 1.5rem;
+      font-size: 0.9rem;
+    }
+    .expivi-controls-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 0.6rem 1rem;
+      background: #ffffff;
+      border-top: 1px solid var(--color-border, #e5e7eb);
+    }
+    .expivi-control-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #334155;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .expivi-control-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+      border-color: #94a3b8;
+    }
+  </style>
+{% endif %}

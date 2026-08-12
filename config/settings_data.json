@@ -10,6 +10,17 @@
 {
   "current": {
     "enable_tawkto": true,
-    "tawkto_property_id": "6a7c9995b02fd41d4c903642/1jvrbft1u"
+    "tawkto_property_id": "6a7c9995b02fd41d4c903642/1jvrbft1u",
+    "enable_ga4": false,
+    "ga4_measurement_id": "G-XXXXXXXXXX",
+    "enable_meta_pixel": false,
+    "meta_pixel_id": "123456789012345",
+    "enable_tiktok_pixel": false,
+    "tiktok_pixel_id": "XXXXXXXXXXXXXXXX",
+    "enable_pinterest_tag": false,
+    "pinterest_tag_id": "XXXXXXXXXXXXXXXX",
+    "enable_google_ads": false,
+    "google_ads_conversion_id": "AW-XXXXXXXXX",
+    "google_ads_conversion_label": "XXXXXXXX"
   }
 }

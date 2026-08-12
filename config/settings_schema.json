@@ -123,5 +123,130 @@
         "info": "Property ID / Widget Path from your Tawk.to embed code."
       }
     ]
+  },
+  {
+    "name": "Expivi 3D Viewer",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Expivi 3D Product Visualization"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_expivi_global",
+        "label": "Enable Expivi 3D Viewer",
+        "default": true,
+        "info": "Enable Expivi 3D Viewer integration on product pages."
+      },
+      {
+        "type": "text",
+        "id": "expivi_client_id",
+        "label": "Expivi Client / Account ID",
+        "default": "",
+        "info": "Optional global Expivi Client ID or API key."
+      }
+    ]
+  },
+  {
+    "name": "Analytics & Tracking",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Google Analytics 4 (GA4)"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_ga4",
+        "label": "Enable Google Analytics 4",
+        "default": false,
+        "info": "Load GA4 tracking tag across the storefront."
+      },
+      {
+        "type": "text",
+        "id": "ga4_measurement_id",
+        "label": "GA4 Measurement ID",
+        "default": "G-XXXXXXXXXX",
+        "placeholder": "G-XXXXXXXXXX"
+      },
+      {
+        "type": "header",
+        "content": "Meta / Facebook Pixel"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_meta_pixel",
+        "label": "Enable Meta Pixel",
+        "default": false,
+        "info": "Load Meta / Facebook conversion pixel."
+      },
+      {
+        "type": "text",
+        "id": "meta_pixel_id",
+        "label": "Meta Pixel ID",
+        "default": "123456789012345",
+        "placeholder": "123456789012345"
+      },
+      {
+        "type": "header",
+        "content": "TikTok Pixel"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_tiktok_pixel",
+        "label": "Enable TikTok Pixel",
+        "default": false,
+        "info": "Load TikTok Pixel conversion tag."
+      },
+      {
+        "type": "text",
+        "id": "tiktok_pixel_id",
+        "label": "TikTok Pixel ID",
+        "default": "XXXXXXXXXXXXXXXX",
+        "placeholder": "XXXXXXXXXXXXXXXX"
+      },
+      {
+        "type": "header",
+        "content": "Pinterest Conversion Tag"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_pinterest_tag",
+        "label": "Enable Pinterest Tag",
+        "default": false,
+        "info": "Load Pinterest Conversion Tag."
+      },
+      {
+        "type": "text",
+        "id": "pinterest_tag_id",
+        "label": "Pinterest Tag ID",
+        "default": "XXXXXXXXXXXXXXXX",
+        "placeholder": "XXXXXXXXXXXXXXXX"
+      },
+      {
+        "type": "header",
+        "content": "Google Ads Conversion Tracking"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_google_ads",
+        "label": "Enable Google Ads",
+        "default": false,
+        "info": "Load Google Ads conversion tracking."
+      },
+      {
+        "type": "text",
+        "id": "google_ads_conversion_id",
+        "label": "Conversion ID",
+        "default": "AW-XXXXXXXXX",
+        "placeholder": "AW-XXXXXXXXX"
+      },
+      {
+        "type": "text",
+        "id": "google_ads_conversion_label",
+        "label": "Conversion Label",
+        "default": "XXXXXXXX",
+        "placeholder": "XXXXXXXX"
+      }
+    ]
   }
 ]

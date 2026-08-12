@@ -1,0 +1,293 @@
+{% comment %}
+  Centralized Analytics & Advertising Pixels Integration
+  Controlled via Theme Settings (Online Store -> Themes -> Customize -> Theme Settings -> Analytics & Tracking)
+{% endcomment %}
+
+{% comment %} Read Settings and IDs {% endcomment %}
+{% assign enable_ga4 = settings.enable_ga4 %}
+{% assign ga4_id = settings.ga4_measurement_id | strip %}
+
+{% assign enable_meta = settings.enable_meta_pixel %}
+{% assign meta_id = settings.meta_pixel_id | strip %}
+
+{% assign enable_tiktok = settings.enable_tiktok_pixel %}
+{% assign tiktok_id = settings.tiktok_pixel_id | strip %}
+
+{% assign enable_pinterest = settings.enable_pinterest_tag %}
+{% assign pinterest_id = settings.pinterest_tag_id | strip %}
+
+{% assign enable_gads = settings.enable_google_ads %}
+{% assign gads_id = settings.google_ads_conversion_id | strip %}
+{% assign gads_label = settings.google_ads_conversion_label | strip %}
+
+{% comment %} Only execute if at least one platform is enabled with a valid non-empty ID {% endcomment %}
+{% assign active_ga4 = false %}
+{% if enable_ga4 and ga4_id != blank %}
+  {% assign active_ga4 = true %}
+{% endif %}
+
+{% assign active_meta = false %}
+{% if enable_meta and meta_id != blank %}
+  {% assign active_meta = true %}
+{% endif %}
+
+{% assign active_tiktok = false %}
+{% if enable_tiktok and tiktok_id != blank %}
+  {% assign active_tiktok = true %}
+{% endif %}
+
+{% assign active_pinterest = false %}
+{% if enable_pinterest and pinterest_id != blank %}
+  {% assign active_pinterest = true %}
+{% endif %}
+
+{% assign active_gads = false %}
+{% if enable_gads and gads_id != blank %}
+  {% assign active_gads = true %}
+{% endif %}
+
+{% if active_ga4 or active_meta or active_tiktok or active_pinterest or active_gads %}
+  <!-- Centralized Analytics & Pixels Script -->
+  <script>
+    window.ThemeAnalytics = window.ThemeAnalytics || {
+      activePlatforms: {
+        ga4: {{ active_ga4 | json }},
+        meta: {{ active_meta | json }},
+        tiktok: {{ active_tiktok | json }},
+        pinterest: {{ active_pinterest | json }},
+        gads: {{ active_gads | json }}
+      },
+      ids: {
+        ga4: {{ ga4_id | json }},
+        meta: {{ meta_id | json }},
+        tiktok: {{ tiktok_id | json }},
+        pinterest: {{ pinterest_id | json }},
+        gads: {{ gads_id | json }},
+        gads_label: {{ gads_label | json }}
+      },
+      currency: {{ shop.currency | json }}
+    };
+  </script>
+
+  {% comment %} 1. Google Analytics 4 (GA4) & Google Ads Global Tag (gtag.js) {% endcomment %}
+  {% if active_ga4 or active_gads %}
+    {% assign gtag_id = ga4_id %}
+    {% if gtag_id == blank %}{% assign gtag_id = gads_id %}{% endif %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ gtag_id }}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = window.gtag || gtag;
+      gtag('js', new Date());
+
+      {% if active_ga4 %}
+        if (!window._ga4_initialized) {
+          window._ga4_initialized = true;
+          gtag('config', {{ ga4_id | json }}, { 'send_page_view': true });
+        }
+      {% endif %}
+
+      {% if active_gads %}
+        if (!window._gads_initialized) {
+          window._gads_initialized = true;
+          gtag('config', {{ gads_id | json }});
+        }
+      {% endif %}
+    </script>
+  {% endif %}
+
+  {% comment %} 2. Meta / Facebook Pixel (fbq) {% endcomment %}
+  {% if active_meta %}
+    <script>
+      if (!window._fb_pixel_initialized) {
+        window._fb_pixel_initialized = true;
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', {{ meta_id | json }});
+        fbq('track', 'PageView');
+      }
+    </script>
+  {% endif %}
+
+  {% comment %} 3. TikTok Pixel (ttq) {% endcomment %}
+  {% if active_tiktok %}
+    <script>
+      if (!window._tiktok_pixel_initialized) {
+        window._tiktok_pixel_initialized = true;
+        !function (w, d, t) {
+          w.TiktokPixelObject = t;
+          var ttq = w[t] = w[t] || [];
+          ttq.methods = ["page", "track", "identify", "instances", "debug", "on", "off", "once", "ready", "alias", "group", "enableCookie", "disableCookie"];
+          ttq.setAndDefer = function (t, e) { t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } };
+          for (var i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);
+          ttq.instance = function (t) { for (var e = ttq._i[t] || [], n = 0; n < ttq.methods.length; n++) ttq.setAndDefer(e, ttq.methods[n]); return e };
+          ttq.load = function (e, n) {
+            var i = "https://analytics.tiktok.com/i18n/pixel/events.js";
+            ttq._i = ttq._i || {}, ttq._i[e] = [], ttq._i[e]._u = i, ttq._t = ttq._t || {}, ttq._t[e] = +new Date, ttq._o = ttq._o || {}, ttq._o[e] = n || {};
+            var o = document.createElement("script"); o.type = "text/javascript", o.async = !0, o.src = i + "?sdkid=" + e + "&lib=" + t;
+            var a = document.getElementsByTagName("script")[0]; a.parentNode.insertBefore(o, a)
+          };
+          ttq.load({{ tiktok_id | json }});
+          ttq.page();
+        }(window, document, 'ttq');
+      }
+    </script>
+  {% endif %}
+
+  {% comment %} 4. Pinterest Conversion Tag (pintrk) {% endcomment %}
+  {% if active_pinterest %}
+    <script>
+      if (!window._pinterest_tag_initialized) {
+        window._pinterest_tag_initialized = true;
+        !function(e){if(!window.pintrk){window.pintrk=function(){
+        window.pintrk.queue.push(Array.prototype.slice.call(arguments))};var
+        n=window.pintrk;n.queue=[],n.version="3.0";var
+        t=document.createElement("script");t.async=!0,t.src=e;var
+        r=document.getElementsByTagName("script")[0];
+        r.parentNode.insertBefore(t,r)}}("https://s.pinimg.com/ct/core.js");
+        pintrk('load', {{ pinterest_id | json }});
+        pintrk('page');
+      }
+    </script>
+  {% endif %}
+
+  {% comment %} E-COMMERCE EVENT TRACKING ARCHITECTURE {% endcomment %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 1. PRODUCT VIEW EVENT (view_item / ViewContent)
+      {% if template.name == 'product' %}
+        var currentProductData = {
+          id: {{ product.id | json }},
+          title: {{ product.title | json }},
+          price: {{ product.price | divided_by: 100.0 | json }},
+          variantId: {{ product.selected_or_first_available_variant.id | json }},
+          currency: {{ shop.currency | json }}
+        };
+
+        if (window.ThemeAnalytics.activePlatforms.ga4 && window.gtag) {
+          gtag('event', 'view_item', {
+            currency: currentProductData.currency,
+            value: currentProductData.price,
+            items: [{
+              item_id: currentProductData.id,
+              item_name: currentProductData.title,
+              price: currentProductData.price
+            }]
+          });
+        }
+
+        if (window.ThemeAnalytics.activePlatforms.meta && window.fbq) {
+          fbq('track', 'ViewContent', {
+            content_ids: [currentProductData.id],
+            content_name: currentProductData.title,
+            content_type: 'product',
+            value: currentProductData.price,
+            currency: currentProductData.currency
+          });
+        }
+
+        if (window.ThemeAnalytics.activePlatforms.tiktok && window.ttq) {
+          ttq.track('ViewContent', {
+            content_id: currentProductData.id,
+            content_type: 'product',
+            content_name: currentProductData.title,
+            price: currentProductData.price,
+            currency: currentProductData.currency
+          });
+        }
+
+        if (window.ThemeAnalytics.activePlatforms.pinterest && window.pintrk) {
+          pintrk('track', 'pagevisit', {
+            line_items: [{ product_id: currentProductData.id, product_name: currentProductData.title, price: currentProductData.price }]
+          });
+        }
+      {% endif %}
+
+      // 2. ADD TO CART EVENT (add_to_cart / AddToCart)
+      document.addEventListener('submit', function(e) {
+        var form = e.target;
+        if (form && (form.action.indexOf('/cart/add') !== -1 || form.getAttribute('action') === '/cart/add')) {
+          var productId = form.querySelector('[name="id"]')?.value || '{{ product.id }}';
+          var qty = parseInt(form.querySelector('[name="quantity"]')?.value || '1', 10);
+          var price = parseFloat('{{ product.price | divided_by: 100.0 }}') || 0;
+
+          if (window.ThemeAnalytics.activePlatforms.ga4 && window.gtag) {
+            gtag('event', 'add_to_cart', {
+              currency: window.ThemeAnalytics.currency,
+              value: price * qty,
+              items: [{ item_id: productId, quantity: qty, price: price }]
+            });
+          }
+
+          if (window.ThemeAnalytics.activePlatforms.meta && window.fbq) {
+            fbq('track', 'AddToCart', {
+              content_ids: [productId],
+              content_type: 'product',
+              value: price * qty,
+              currency: window.ThemeAnalytics.currency
+            });
+          }
+
+          if (window.ThemeAnalytics.activePlatforms.tiktok && window.ttq) {
+            ttq.track('AddToCart', {
+              content_id: productId,
+              quantity: qty,
+              price: price,
+              currency: window.ThemeAnalytics.currency
+            });
+          }
+
+          if (window.ThemeAnalytics.activePlatforms.pinterest && window.pintrk) {
+            pintrk('track', 'addtocart', {
+              val: price * qty,
+              currency: window.ThemeAnalytics.currency
+            });
+          }
+        }
+      });
+
+      // 3. BEGIN CHECKOUT EVENT (begin_checkout / InitiateCheckout)
+      document.addEventListener('click', function(e) {
+        var target = e.target.closest('a[href*="/checkout"], button[name="checkout"], input[name="checkout"]');
+        if (target) {
+          var cartValue = parseFloat('{{ cart.total_price | divided_by: 100.0 }}') || 0;
+
+          if (window.ThemeAnalytics.activePlatforms.ga4 && window.gtag) {
+            gtag('event', 'begin_checkout', {
+              currency: window.ThemeAnalytics.currency,
+              value: cartValue
+            });
+          }
+
+          if (window.ThemeAnalytics.activePlatforms.meta && window.fbq) {
+            fbq('track', 'InitiateCheckout', {
+              value: cartValue,
+              currency: window.ThemeAnalytics.currency
+            });
+          }
+
+          if (window.ThemeAnalytics.activePlatforms.tiktok && window.ttq) {
+            ttq.track('InitiateCheckout', {
+              value: cartValue,
+              currency: window.ThemeAnalytics.currency
+            });
+          }
+
+          if (window.ThemeAnalytics.activePlatforms.gads && window.gtag && window.ThemeAnalytics.ids.gads_label) {
+            gtag('event', 'conversion', {
+              'send_to': window.ThemeAnalytics.ids.gads + '/' + window.ThemeAnalytics.ids.gads_label,
+              'value': cartValue,
+              'currency': window.ThemeAnalytics.currency
+            });
+          }
+        }
+      });
+    });
+  </script>
+{% endif %}
