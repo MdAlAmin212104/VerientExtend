@@ -2,6 +2,39 @@
   Professional Product Details Section inspired by Shopify Dawn theme
 {% endcomment %}
 
+{% assign is_wholesale_customer = false %}
+{% if customer and customer.tags contains 'wholesale' %}
+  {% assign is_wholesale_customer = true %}
+{% endif %}
+
+{% assign is_prod_wholesale = false %}
+{% assign wf_val = product.metafields.custom.wholesale.value %}{% if wf_val == nil %}{% assign wf_val = product.metafields.custom.wholesale %}{% endif %}
+{% if wf_val == true or wf_val == 'true' or product.tags contains 'wholesale-only' or product.tags contains 'wholesale' %}
+  {% assign is_prod_wholesale = true %}
+{% endif %}
+
+{% if is_prod_wholesale and is_wholesale_customer == false %}
+  <section class="product-page-section">
+    <div style="max-width: 600px; margin: 4rem auto; text-align: center; padding: 3rem 2rem; background: #ffffff; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);">
+      <div style="width: 64px; height: 64px; background: #e0e7ff; color: #4f46e5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      </div>
+      <h1 style="font-size: 1.875rem; font-weight: 800; color: #111827; margin-bottom: 0.75rem;">Wholesale Exclusive Product</h1>
+      <p style="font-size: 1rem; color: #4b5563; margin-bottom: 2rem; line-height: 1.6;">
+        This product is strictly reserved for verified Wholesale accounts. If you are a wholesale partner, please log in with your wholesale account to view details and place orders.
+      </p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        {% if customer %}
+          <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary">Browse Available Products</a>
+        {% else %}
+          <a href="{{ routes.account_login_url }}" class="btn btn-primary">Log In to Wholesale Account</a>
+          <a href="{{ routes.all_products_collection_url }}" class="btn btn-secondary">Browse Store</a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+{% else %}
+
 {% if product.metafields.custom.configurator.value != blank %}
   {{ 'product-configurator.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'product-configurator.js' | asset_url }}" defer></script>
@@ -236,6 +269,7 @@
     </div>
   </div>
 </section>
+{% endif %}
 
 {% stylesheet %}
   .product-page-section {

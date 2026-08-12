@@ -2,6 +2,11 @@
   Professional Collections List Section inspired by Shopify Dawn theme
 {% endcomment %}
 
+{% assign is_wholesale_customer = false %}
+{% if customer and customer.tags contains 'wholesale' %}
+  {% assign is_wholesale_customer = true %}
+{% endif %}
+
 <div class="collections-list-section">
   <div class="collections-header">
     <h1 class="collections-header__title">{{ 'collections.title' | t | default: 'Our Collections' }}</h1>
@@ -10,6 +15,22 @@
 
   <div class="collections-grid {{ section.settings.grid_item_width }}" style="--grid-gap: {{ section.settings.grid_gap }}px">
     {% for collection in collections %}
+      {% assign hidden_count = 0 %}
+      {% if is_wholesale_customer == false %}
+        {% for prod in collection.products %}
+          {% assign is_prod_wholesale = false %}
+          {% assign wf_val = prod.metafields.custom.wholesale.value %}{% if wf_val == nil %}{% assign wf_val = prod.metafields.custom.wholesale %}{% endif %}
+          {% if wf_val == true or wf_val == 'true' or prod.tags contains 'wholesale-only' or prod.tags contains 'wholesale' %}
+            {% assign is_prod_wholesale = true %}
+          {% endif %}
+
+          {% if is_prod_wholesale %}
+            {% assign hidden_count = hidden_count | plus: 1 %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      {% assign visible_coll_count = collection.all_products_count | minus: hidden_count %}
+
       <a class="collection-item-card" href="{{ collection.url }}">
         <div class="collection-item-card__image-wrapper">
           {% if collection.featured_image %}
@@ -24,7 +45,7 @@
           {% endif %}
           <div class="collection-item-card__gradient-overlay"></div>
           
-          <span class="collection-item-card__count-badge">{{ collection.all_products_count }} Products</span>
+          <span class="collection-item-card__count-badge">{{ visible_coll_count }} Products</span>
         </div>
 
         <div class="collection-item-card__content">

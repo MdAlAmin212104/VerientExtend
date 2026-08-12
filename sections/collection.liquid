@@ -2,6 +2,28 @@
   Professional Collection Page Section inspired by Shopify Dawn theme
 {% endcomment %}
 
+{% assign is_wholesale_customer = false %}
+{% if customer and customer.tags contains 'wholesale' %}
+  {% assign is_wholesale_customer = true %}
+{% endif %}
+
+{% assign hidden_wholesale_count = 0 %}
+{% if is_wholesale_customer == false %}
+  {% for prod in collection.products %}
+    {% assign is_prod_wholesale = false %}
+    {% assign wf_val = prod.metafields.custom.wholesale.value %}{% if wf_val == nil %}{% assign wf_val = prod.metafields.custom.wholesale %}{% endif %}
+    {% if wf_val == true or wf_val == 'true' or prod.tags contains 'wholesale-only' or prod.tags contains 'wholesale' %}
+      {% assign is_prod_wholesale = true %}
+    {% endif %}
+
+    {% if is_prod_wholesale %}
+      {% assign hidden_wholesale_count = hidden_wholesale_count | plus: 1 %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% assign total_customer_products_count = collection.products_count | minus: hidden_wholesale_count %}
+
 <div class="collection-section">
   <!-- Hero Banner -->
   <header class="collection-hero {% if collection.image %}has-bg-image{% endif %}">
@@ -15,7 +37,7 @@
     <div class="collection-hero__content">
       <h1 class="collection-title">
         {{ collection.title }}
-        <span class="collection-count-badge">{{ collection.products_count }} Products</span>
+        <span class="collection-count-badge">{{ total_customer_products_count }} Products</span>
       </h1>
 
       {% if collection.description != blank %}
@@ -29,7 +51,19 @@
   <!-- Toolbar & Filters -->
   <div class="collection-toolbar">
     <div class="collection-toolbar__count">
-      Showing <strong>{{ collection.products.size }}</strong> of <strong>{{ collection.products_count }}</strong> items
+      {% assign visible_products_count = 0 %}
+      {% for product in collection.products %}
+        {% assign is_prod_wholesale = false %}
+        {% assign wf_val = product.metafields.custom.wholesale.value %}{% if wf_val == nil %}{% assign wf_val = product.metafields.custom.wholesale %}{% endif %}
+        {% if wf_val == true or wf_val == 'true' or product.tags contains 'wholesale-only' or product.tags contains 'wholesale' %}
+          {% assign is_prod_wholesale = true %}
+        {% endif %}
+
+        {% unless is_prod_wholesale and is_wholesale_customer == false %}
+          {% assign visible_products_count = visible_products_count | plus: 1 %}
+        {% endunless %}
+      {% endfor %}
+      Showing <strong>{{ visible_products_count }}</strong> of <strong>{{ total_customer_products_count }}</strong> items
     </div>
 
     <div class="collection-toolbar__sort">
@@ -50,15 +84,30 @@
   <!-- Products Grid -->
   {% paginate collection.products by 16 %}
     <div class="collection-products-grid">
+      {% assign rendered_cards_count = 0 %}
       {% for product in collection.products %}
+        {% assign is_prod_wholesale = false %}
+        {% assign wf_val = product.metafields.custom.wholesale.value %}{% if wf_val == nil %}{% assign wf_val = product.metafields.custom.wholesale %}{% endif %}
+        {% if wf_val == true or wf_val == 'true' or product.tags contains 'wholesale-only' or product.tags contains 'wholesale' %}
+          {% assign is_prod_wholesale = true %}
+        {% endif %}
+
+        {% if is_prod_wholesale and is_wholesale_customer == false %}
+          {% continue %}
+        {% endif %}
+        {% assign rendered_cards_count = rendered_cards_count | plus: 1 %}
+
         <div class="product-card">
           <div class="product-card__image-container">
+            {% if is_prod_wholesale %}
+              <span class="product-card__badge badge-wholesale">Wholesale Exclusive</span>
+            {% endif %}
             {% unless product.available %}
-              <span class="product-card__badge badge-sold-out">Out of Stock</span>
+              <span class="product-card__badge badge-sold-out" {% if is_prod_wholesale %}style="top: 2.5rem;"{% endif %}>Out of Stock</span>
             {% else %}
               {% if product.compare_at_price > product.price %}
                 {% assign discount = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price %}
-                <span class="product-card__badge badge-sale">Save {{ discount }}%</span>
+                <span class="product-card__badge badge-sale" {% if is_prod_wholesale %}style="top: 2.5rem;"{% endif %}>Save {{ discount }}%</span>
               {% endif %}
             {% endunless %}
 
@@ -125,12 +174,14 @@
             </div>
           </div>
         </div>
-      {% else %}
+      {% endfor %}
+
+      {% if rendered_cards_count == 0 %}
         <div class="collection-empty">
           <p>No products found in this collection.</p>
           <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary">Browse All Products</a>
         </div>
-      {% endfor %}
+      {% endif %}
     </div>
 
     <!-- Pagination -->
@@ -327,6 +378,15 @@
     z-index: 2;
     border-radius: 10px;
     padding: 4px 10px;
+  }
+
+  .badge-wholesale {
+    background-color: #6366f1;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
   }
 
   .product-card__quick-add-form {
