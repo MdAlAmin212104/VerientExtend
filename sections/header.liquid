@@ -1,5 +1,13 @@
 <header class="header">
   <div class="header__left">
+    <button type="button" class="header__icon-btn header__mobile-toggle" id="MobileMenuToggle" aria-label="Toggle Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+
     <h1 class="header__logo">
       <a href="{{ routes.root_url }}">{{ shop.name }}</a>
     </h1>
@@ -18,6 +26,10 @@
       <shopify-account menu="{{ section.settings.customer_account_menu }}" class="header__account">
         {{ 'icon-account.svg' | inline_asset_content }}
       </shopify-account>
+    {% else %}
+      <a href="{{ routes.account_url | default: routes.account_login_url }}" class="header__icon-btn header__account-btn" aria-label="Account">
+        {{ 'icon-account.svg' | inline_asset_content }}
+      </a>
     {% endif %}
 
     <button type="button" class="header__icon-btn header__cart-btn" data-cart-drawer-toggle aria-label="Cart ({{ cart.item_count }} items)">
@@ -29,34 +41,80 @@
   </div>
 </header>
 
+<!-- Mobile Navigation Drawer -->
+<div class="mobile-menu-container" id="MobileMenuContainer">
+  <div class="mobile-menu-overlay" id="MobileMenuOverlay"></div>
+  <nav class="mobile-menu-drawer" id="MobileMenuDrawer" aria-label="Mobile Navigation">
+    <div class="mobile-menu-header">
+      <span class="mobile-menu-title">{{ shop.name }}</span>
+      <button type="button" class="mobile-menu-close" id="MobileMenuClose" aria-label="Close menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="mobile-menu-links">
+      {% for link in section.settings.menu.links %}
+        <a href="{{ link.url }}" class="mobile-menu-link {% if link.active %}mobile-menu-link--active{% endif %}">
+          {{ link.title }}
+        </a>
+      {% endfor %}
+    </div>
+
+    <div class="mobile-menu-footer">
+      <a href="{{ routes.account_url | default: routes.account_login_url }}" class="btn btn-secondary btn-full">My Account</a>
+    </div>
+  </nav>
+</div>
+
 {% stylesheet %}
+  :root {
+    --icon-stroke-width: 1.5px;
+  }
+
   .header {
     height: 4.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid var(--color-border, #e5e7eb);
-    padding: 0 1rem;
+    padding: 0 1.5rem;
     background: #ffffff;
     position: sticky;
     top: 0;
     z-index: 100;
   }
+
+  .header__left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .header__mobile-toggle {
+    display: none !important;
+  }
+
   .header__logo {
     font-size: 1.35rem;
     font-weight: 800;
     letter-spacing: -0.02em;
     margin: 0;
   }
+
   .header__logo a {
     color: var(--color-foreground, #111827);
     text-decoration: none;
   }
+
   .header__navigation {
     display: flex;
     align-items: center;
     gap: 2rem;
   }
+
   .header__link {
     font-size: 0.95rem;
     font-weight: 500;
@@ -66,10 +124,12 @@
     padding: 0.25rem 0;
     transition: color 0.2s ease;
   }
+
   .header__link:hover,
   .header__link--active {
     color: var(--color-foreground, #111827);
   }
+
   .header__link::after {
     content: '';
     position: absolute;
@@ -80,35 +140,50 @@
     background-color: var(--color-foreground, #111827);
     transition: width 0.2s ease;
   }
+
   .header__link:hover::after,
   .header__link--active::after {
     width: 100%;
   }
+
   .header__icons {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
   }
-  .header__icon-btn {
+
+  .header__icon-btn,
+  shopify-account,
+  shopify-account button,
+  shopify-account a {
     background: none;
     border: none;
-    padding: 0.5rem;
+    padding: 0;
     cursor: pointer;
     position: relative;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-foreground, #111827);
+    width: 2.6rem;
+    height: 2.6rem;
     border-radius: 50%;
+    color: var(--color-foreground, #111827);
     transition: background 0.2s ease;
   }
-  .header__icon-btn:hover {
+
+  .header__icon-btn:hover,
+  shopify-account:hover,
+  shopify-account button:hover,
+  shopify-account a:hover {
     background: var(--color-bg-subtle, #f9fafb);
   }
-  .header__icon-btn svg {
-    width: 1.4rem;
-    height: 1.4rem;
+
+  .header__icon-btn svg,
+  shopify-account svg {
+    width: 1.45rem;
+    height: 1.45rem;
   }
+
   .cart-count-badge {
     position: absolute;
     top: 2px;
@@ -128,12 +203,160 @@
     box-shadow: 0 0 0 2px #ffffff;
   }
 
+  /* Mobile Drawer Menu Styles */
+  .mobile-menu-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999999;
+    pointer-events: none;
+  }
+
+  .mobile-menu-container[data-open="true"] {
+    pointer-events: auto;
+  }
+
+  .mobile-menu-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .mobile-menu-container[data-open="true"] .mobile-menu-overlay {
+    opacity: 1;
+  }
+
+  .mobile-menu-drawer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 85%;
+    max-width: 320px;
+    height: 100%;
+    background: #ffffff;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(-100%);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .mobile-menu-container[data-open="true"] .mobile-menu-drawer {
+    transform: translateX(0);
+  }
+
+  .mobile-menu-header {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+  }
+
+  .mobile-menu-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--color-foreground, #111827);
+  }
+
+  .mobile-menu-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.4rem;
+    border-radius: 50%;
+    color: var(--color-foreground, #111827);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-menu-links {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .mobile-menu-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--color-foreground, #111827);
+    border-radius: var(--radius-md, 8px);
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .mobile-menu-link:hover,
+  .mobile-menu-link--active {
+    background: var(--color-bg-subtle, #f9fafb);
+    color: var(--color-accent, #2563eb);
+  }
+
+  .mobile-menu-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--color-border, #e5e7eb);
+  }
+
   @media (max-width: 768px) {
+    .header {
+      padding: 0 1rem;
+    }
     .header__navigation {
       display: none;
     }
+    .header__mobile-toggle {
+      display: inline-flex !important;
+    }
   }
 {% endstylesheet %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('MobileMenuToggle');
+    const container = document.getElementById('MobileMenuContainer');
+    const overlay = document.getElementById('MobileMenuOverlay');
+    const closeBtn = document.getElementById('MobileMenuClose');
+
+    function openMenu() {
+      if (container) {
+        container.setAttribute('data-open', 'true');
+        document.body.setAttribute('data-mobile-menu-open', 'true');
+      }
+    }
+
+    function closeMenu() {
+      if (container) {
+        container.setAttribute('data-open', 'false');
+        document.body.removeAttribute('data-mobile-menu-open');
+      }
+    }
+
+    if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+    if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+    if (overlay) overlay.addEventListener('click', closeMenu);
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && container && container.getAttribute('data-open') === 'true') {
+        closeMenu();
+      }
+    });
+  });
+</script>
 
 {% schema %}
 {

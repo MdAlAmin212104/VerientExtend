@@ -45,9 +45,7 @@
 
       {% if product.images.size > 1 %}
         <div class="product-media__thumbnails-wrapper">
-          <button type="button" class="thumb-scroll-btn thumb-scroll-btn--prev" id="ThumbScrollPrev" aria-label="Scroll thumbnails left">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
-          </button>
+         
 
           <div class="product-media__thumbnails" id="ThumbnailsContainer" role="tablist" aria-label="Product thumbnails">
             {% for image in product.images %}
@@ -60,10 +58,6 @@
               </button>
             {% endfor %}
           </div>
-
-          <button type="button" class="thumb-scroll-btn thumb-scroll-btn--next" id="ThumbScrollNext" aria-label="Scroll thumbnails right">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          </button>
         </div>
       {% endif %}
     </div>
@@ -692,6 +686,14 @@
           } else if (mainImg) {
             mainImg.src = varImage;
           }
+        }
+
+        // 4. Update Browser URL with ?variant=ID
+        const variantId = selectedOption.value;
+        if (variantId && window.history.replaceState) {
+          const newUrl = new URL(window.location.href);
+          newUrl.searchParams.set('variant', variantId);
+          window.history.replaceState({ path: newUrl.href }, '', newUrl.href);
         }
       });
     }
