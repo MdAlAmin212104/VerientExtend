@@ -8,5 +8,8 @@
  * ------------------------------------------------------------
  */
 {
-  "current": {}
+  "current": {
+    "enable_tawkto": true,
+    "tawkto_property_id": "6a7c9995b02fd41d4c903642/1jvrbft1u"
+  }
 }

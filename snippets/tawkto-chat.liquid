@@ -1,0 +1,25 @@
+{% comment %}
+  Tawk.to Live Chat Integration
+  Controlled via Theme Settings (Online Store -> Themes -> Customize -> Theme Settings -> Live Chat)
+{% endcomment %}
+
+{% if settings.enable_tawkto %}
+  {% assign tawkto_property_id = settings.tawkto_property_id | default: '6a7c9995b02fd41d4c903642/1jvrbft1u' %}
+  {% if tawkto_property_id != blank %}
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+      var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+      (function(){
+        if (window.tawkto_loaded) return;
+        window.tawkto_loaded = true;
+        var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+        s1.async = true;
+        s1.src = 'https://embed.tawk.to/' + {{ tawkto_property_id | json }};
+        s1.charset = 'UTF-8';
+        s1.setAttribute('crossorigin', '*');
+        s0.parentNode.insertBefore(s1, s0);
+      })();
+    </script>
+    <!--End of Tawk.to Script-->
+  {% endif %}
+{% endif %}

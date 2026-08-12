@@ -100,5 +100,28 @@
         "default": 4
       }
     ]
+  },
+  {
+    "name": "Live Chat",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Tawk.to Live Chat"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_tawkto",
+        "label": "Enable Tawk.to Live Chat",
+        "default": true,
+        "info": "Toggle on/off the Tawk.to live chat widget across the storefront."
+      },
+      {
+        "type": "text",
+        "id": "tawkto_property_id",
+        "label": "Tawk.to Property/Widget Path",
+        "default": "6a7c9995b02fd41d4c903642/1jvrbft1u",
+        "info": "Property ID / Widget Path from your Tawk.to embed code."
+      }
+    ]
   }
 ]
