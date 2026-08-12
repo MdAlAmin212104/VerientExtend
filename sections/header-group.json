@@ -34,12 +34,20 @@
             "text": "Sign up for our newsletter to get 15% off your first purchase.",
             "link": ""
           }
+        },
+        "announcement_HMTDMN": {
+          "type": "announcement",
+          "settings": {
+            "text": "Welcome to our store!",
+            "link": ""
+          }
         }
       },
       "block_order": [
         "announcement_EyCwmK",
         "announcement_kxJNc8",
-        "announcement_rGfNLt"
+        "announcement_rGfNLt",
+        "announcement_HMTDMN"
       ],
       "name": "Announcement bar",
       "settings": {
