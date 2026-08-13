@@ -23,11 +23,28 @@
   {% assign is_wholesale_customer = true %}
 {% endif %}
 
+{% assign hidden_wholesale_count = 0 %}
+{% if search.performed and is_wholesale_customer == false %}
+  {% for result in search.results %}
+    {% assign is_prod_wholesale = false %}
+    {% assign wf_val = result.metafields.custom.wholesale.value %}{% if wf_val == nil %}{% assign wf_val = result.metafields.custom.wholesale %}{% endif %}
+    {% if wf_val == true or wf_val == 'true' or result.tags contains 'wholesale-only' or result.tags contains 'wholesale' %}
+      {% assign is_prod_wholesale = true %}
+    {% endif %}
+
+    {% if is_prod_wholesale %}
+      {% assign hidden_wholesale_count = hidden_wholesale_count | plus: 1 %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% assign visible_results_count = search.results_count | minus: hidden_wholesale_count %}
+
 {% if search.performed %}
-  {% if search.results_count == 0 %}
+  {% if visible_results_count == 0 %}
     <p>{{ 'search.no_results_html' | t: terms: search.terms }}</p>
   {% else %}
-    <p>{{ 'search.results_for_html' | t: terms: search.terms, count: search.results_count }}</p>
+    <p>{{ 'search.results_for_html' | t: terms: search.terms, count: visible_results_count }}</p>
 
     <div class="search-results">
       {% paginate search.results by 20 %}
