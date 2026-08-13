@@ -142,7 +142,6 @@
         "type": "text",
         "id": "expivi_client_id",
         "label": "Expivi Client / Account ID",
-        "default": "",
         "info": "Optional global Expivi Client ID or API key."
       }
     ]
