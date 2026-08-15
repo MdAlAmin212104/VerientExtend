@@ -290,20 +290,60 @@
 .configurator-price-box {
   display: flex;
   flex-direction: column;
+  gap: 0.35rem;
+}
+
+.configurator-price-breakdown {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted, #475569);
+}
+
+.configurator-sub-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.configurator-sub-item strong {
+  color: var(--color-foreground, #0f172a);
+}
+
+.configurator-addon-badge {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.configurator-addon-badge strong {
+  color: #047857;
+}
+
+.configurator-total-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
 }
 
 .configurator-price-label {
   font-size: 0.825rem;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--color-text-muted, #6b7280);
+  color: var(--color-text-muted, #64748b);
 }
 
 .configurator-price-amount {
   font-size: 1.5rem;
   font-weight: 800;
-  color: var(--color-foreground, #111827);
+  color: var(--color-foreground, #0f172a);
 }
 
 .configurator-actions {

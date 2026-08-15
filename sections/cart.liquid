@@ -14,9 +14,20 @@
     </a>
   </div>
 
+  {% assign effective_cart_total = 0 %}
+  {% for item in cart.items %}
+    {% assign item_total_cents = item.properties['_total_price_cents'] | plus: 0 %}
+    {% if item_total_cents > 0 %}
+      {% assign item_line_cents = item_total_cents | times: item.quantity %}
+      {% assign effective_cart_total = effective_cart_total | plus: item_line_cents %}
+    {% else %}
+      {% assign effective_cart_total = effective_cart_total | plus: item.final_line_price %}
+    {% endif %}
+  {% endfor %}
+
   {% assign free_shipping_threshold = 10000 %}
   <div class="cart-page-shipping-bar">
-    {% assign cart_total = cart.total_price %}
+    {% assign cart_total = effective_cart_total %}
     {% if cart_total >= free_shipping_threshold %}
       <p class="shipping-bar__text shipping-bar__text--free">🎉 Congratulations! You've unlocked <strong>FREE Shipping!</strong></p>
       <div class="shipping-bar__progress-track"><div class="shipping-bar__progress-fill" style="width: 100%;"></div></div>
@@ -102,11 +113,20 @@
                 </div>
               </div>
 
-              {% assign configured_unit_price = item.properties['Configured Unit Price'] | default: item.properties['Configured Price'] %}
+              {% assign configured_unit_price = item.properties['_configured_price'] | default: item.properties['Configured Unit Price'] | default: item.properties['Configured Price'] %}
+              {% assign item_base_cents = item.properties['_base_price_cents'] | plus: 0 %}
+              {% assign item_total_cents = item.properties['_total_price_cents'] | plus: 0 %}
+              {% assign item_addon_cents = item_total_cents | minus: item_base_cents %}
+
               <div class="col-price cart-item-price-col">
                 {% if configured_unit_price != blank %}
-                  <span class="cart-item-price" style="font-weight: 800; color: #111827;">{{ configured_unit_price }}</span>
-                  <div style="font-size:0.75rem; color:#6b7280;">(Base Variant: {{ item.final_price | money }})</div>
+                  <span class="cart-item-price" style="font-weight: 800; color: #111827; font-size: 1.05rem;">{{ configured_unit_price }}</span>
+                  <div class="cart-item-price-breakdown" style="font-size:0.775rem; color:#475569; margin-top:0.2rem; display:flex; flex-direction:column; gap:0.1rem;">
+                    <span>Base: <strong>{{ item_base_cents | default: item.final_price | money }}</strong></span>
+                    {% if item_addon_cents > 0 %}
+                      <span style="color:#059669; font-weight:700;">Add-ons: +{{ item_addon_cents | money }}</span>
+                    {% endif %}
+                  </div>
                 {% else %}
                   <span class="cart-item-price">{{ item.final_price | money }}</span>
                   {% if item.original_price > item.final_price %}
@@ -124,16 +144,12 @@
               </div>
 
               <div class="col-total cart-item-total-col">
-                {% if configured_unit_price != blank %}
-                  <span class="cart-item-line-total" style="font-weight: 800; color: #111827;">
-                    {% assign price_val = configured_unit_price | remove: '$' | remove: ',' | plus: 0 %}
-                    {% if price_val > 0 %}
-                      {% assign line_total = price_val | times: item.quantity %}
-                      ${{ line_total | number_with_delimiter }}
-                    {% else %}
-                      {{ configured_unit_price }}
-                    {% endif %}
-                  </span>
+                {% assign item_total_cents = item.properties['_total_price_cents'] | plus: 0 %}
+                {% if item_total_cents > 0 %}
+                  {% assign item_line_total = item_total_cents | times: item.quantity %}
+                  <span class="cart-item-line-total" style="font-weight: 800; color: #111827;">{{ item_line_total | money }}</span>
+                {% elsif configured_unit_price != blank %}
+                  <span class="cart-item-line-total" style="font-weight: 800; color: #111827;">{{ configured_unit_price }}</span>
                 {% else %}
                   <span class="cart-item-line-total">{{ item.final_line_price | money }}</span>
                 {% endif %}
@@ -161,7 +177,7 @@
         <div class="cart-summary-rows">
           <div class="summary-row">
             <span>Subtotal</span>
-            <span class="summary-price">{{ cart.total_price | money }}</span>
+            <span class="summary-price">{{ effective_cart_total | money }}</span>
           </div>
 
           {% if cart.total_discounts > 0 %}
@@ -186,7 +202,7 @@
 
         <div class="summary-row summary-row--total">
           <span>Estimated Total</span>
-          <span class="summary-total-price">{{ cart.total_price | money }}</span>
+          <span class="summary-total-price">{{ effective_cart_total | money }}</span>
         </div>
 
         <button type="submit" name="checkout" class="btn btn-primary btn-full cart-checkout-btn">

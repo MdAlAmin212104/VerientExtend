@@ -128,15 +128,19 @@
 
       <!-- Price & Stock Badge Section -->
       {% assign current_variant = product.selected_or_first_available_variant %}
-      <div class="product-price-wrapper" id="ProductPriceWrapper">
-        <span class="product-price" id="ProductPrice">{{ current_variant.price | money }}</span>
-        {% if current_variant.compare_at_price > current_variant.price %}
-          <s class="product-compare-price" id="ProductComparePrice">{{ current_variant.compare_at_price | money }}</s>
-        {% endif %}
-        
-        <span class="product-stock-badge {% if current_variant.available %}badge-stock{% else %}badge-sold-out{% endif %}" id="ProductStockBadge">
-          {% if current_variant.available %}In Stock{% else %}Out of Stock{% endif %}
-        </span>
+      <div class="product-price-wrapper" id="ProductPriceWrapper" data-base-price="{{ current_variant.price }}">
+        <div class="product-price-main-block" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+          <div class="product-price-primary" style="display: flex; align-items: baseline; gap: 0.65rem; flex-wrap: wrap;">
+            <span class="product-price" id="ProductPrice">{{ current_variant.price | money }}</span>
+            {% if current_variant.compare_at_price > current_variant.price %}
+              <s class="product-compare-price" id="ProductComparePrice">{{ current_variant.compare_at_price | money }}</s>
+            {% endif %}
+          </div>
+          
+          <span class="product-stock-badge {% if current_variant.available %}badge-stock{% else %}badge-sold-out{% endif %}" id="ProductStockBadge">
+            {% if current_variant.available %}In Stock{% else %}Out of Stock{% endif %}
+          </span>
+        </div>
       </div>
 
       <p class="product-tax-note">Tax included. Shipping calculated at checkout.</p>

@@ -13,13 +13,23 @@ class ProductConfiguratorEngine {
     if (!this.container || !this.jsonPayload) return;
 
     try {
-      this.data = JSON.parse(this.jsonPayload.textContent);
+      const rawText = (this.jsonPayload.textContent || '').trim();
+      const sanitizedJson = rawText.replace(/,\s*([\]}])/g, '$1');
+      this.data = JSON.parse(sanitizedJson);
     } catch (err) {
-      console.error('[Configurator Error] Could not parse Metaobject JSON:', err);
-      return;
+      console.warn('[Configurator] Sanitized parse failed, trying raw:', err);
+      try {
+        this.data = JSON.parse(this.jsonPayload.textContent);
+      } catch (rawErr) {
+        console.error('[Configurator Error] Could not parse Metaobject JSON:', rawErr);
+        return;
+      }
     }
 
-    if (!this.data || !this.data.steps || !this.data.steps.length) return;
+    if (!this.data || !this.data.steps || !this.data.steps.length) {
+      console.warn('[Configurator] No valid steps found in Metaobject payload:', this.data);
+      return;
+    }
 
     // Elements
     this.navContainer = document.getElementById('ConfiguratorStepsNav');
@@ -554,17 +564,42 @@ class ProductConfiguratorEngine {
     }
   }
 
-  updatePrice() {
-    let basePriceCents = 0;
-
-    // Read current selected Shopify variant price
-    if (this.variantSelect) {
+  getBasePriceCents() {
+    // 1. From Variant Select dropdown if present
+    if (this.variantSelect && this.variantSelect.selectedIndex >= 0) {
       const opt = this.variantSelect.options[this.variantSelect.selectedIndex];
       if (opt && opt.dataset.price) {
         const cleanPrice = opt.dataset.price.replace(/[^0-9]/g, '');
-        basePriceCents = parseInt(cleanPrice, 10) || 0;
+        const val = parseInt(cleanPrice, 10);
+        if (!isNaN(val) && val > 0) return val;
       }
     }
+
+    // 2. From Container data-base-price
+    if (this.container && this.container.dataset.basePrice) {
+      const val = parseInt(this.container.dataset.basePrice, 10);
+      if (!isNaN(val) && val > 0) return val;
+    }
+
+    // 3. From Price Wrapper data-base-price
+    const priceWrapper = document.getElementById('ProductPriceWrapper');
+    if (priceWrapper && priceWrapper.dataset.basePrice) {
+      const val = parseInt(priceWrapper.dataset.basePrice, 10);
+      if (!isNaN(val) && val > 0) return val;
+    }
+
+    // 4. From ProductPrice element initial text
+    if (this.mainPriceEl && this.mainPriceEl.textContent) {
+      const cleanPrice = this.mainPriceEl.textContent.replace(/[^0-9]/g, '');
+      const val = parseInt(cleanPrice, 10);
+      if (!isNaN(val) && val > 0) return val;
+    }
+
+    return 0;
+  }
+
+  updatePrice() {
+    const basePriceCents = this.getBasePriceCents();
 
     // Add active, visible option price adjustments
     let addersCents = 0;
@@ -576,14 +611,30 @@ class ProductConfiguratorEngine {
 
     const totalCents = basePriceCents + addersCents;
 
-    // 1. Update Configurator Total at bottom
-    if (this.liveTotalEl) {
-      this.liveTotalEl.textContent = this.formatMoney(totalCents);
+    // 1. Keep Main PDP Top Price as the Original Variant Base Price
+    if (this.mainPriceEl && basePriceCents > 0) {
+      this.mainPriceEl.textContent = this.formatMoney(basePriceCents);
     }
 
-    // 2. Update Main PDP Price at top of product details
-    if (this.mainPriceEl) {
-      this.mainPriceEl.textContent = this.formatMoney(totalCents);
+    // 2. Update Configurator Footer Base Price display
+    const basePriceEl = document.getElementById('ConfiguratorBasePrice');
+    if (basePriceEl && basePriceCents > 0) {
+      basePriceEl.textContent = this.formatMoney(basePriceCents);
+    }
+
+    // 3. Update Configurator Footer Add-on Price display
+    const addonPriceEl = document.getElementById('ConfiguratorAddonPrice');
+    const addonRowEl = document.getElementById('ConfiguratorAddonRow');
+    if (addonPriceEl) {
+      addonPriceEl.textContent = `+${this.formatMoney(addersCents)}`;
+    }
+    if (addonRowEl) {
+      addonRowEl.style.display = addersCents > 0 ? 'inline-flex' : 'none';
+    }
+
+    // 4. Update Configurator Total at bottom
+    if (this.liveTotalEl) {
+      this.liveTotalEl.textContent = this.formatMoney(totalCents);
     }
   }
 
@@ -599,7 +650,7 @@ class ProductConfiguratorEngine {
     if (this.variantSelect) {
       selectedVariantId = this.variantSelect.value;
     } else {
-      const hiddenVarInput = document.querySelector('input[name="id"]');
+      const hiddenVarInput = document.querySelector('form[action*="/cart/add"] input[name="id"]') || document.querySelector('input[name="id"]');
       if (hiddenVarInput) selectedVariantId = hiddenVarInput.value;
     }
 
@@ -609,14 +660,7 @@ class ProductConfiguratorEngine {
     }
 
     // 2. Calculate Total Configured Unit Price
-    let basePriceCents = 0;
-    if (this.variantSelect) {
-      const opt = this.variantSelect.options[this.variantSelect.selectedIndex];
-      if (opt && opt.dataset.price) {
-        const cleanPrice = opt.dataset.price.replace(/[^0-9]/g, '');
-        basePriceCents = parseInt(cleanPrice, 10) || 0;
-      }
-    }
+    const basePriceCents = this.getBasePriceCents();
     let addersCents = 0;
     Object.keys(this.selections).forEach(handleField => {
       if (this.visibility[handleField] !== false) {

@@ -220,10 +220,19 @@ class CartDrawer {
           }
 
           const newFooter = newDrawerContainer.querySelector('#CartDrawerFooter, .drawer__footer, .cart-drawer__footer');
-          const currentFooter = currentDrawerContainer.querySelector('#CartDrawerFooter, .drawer__footer, .cart-drawer__footer');
+          let currentFooter = currentDrawerContainer.querySelector('#CartDrawerFooter, .drawer__footer, .cart-drawer__footer');
 
-          if (newFooter && currentFooter) {
-            currentFooter.innerHTML = newFooter.innerHTML;
+          if (newFooter) {
+            if (currentFooter) {
+              currentFooter.innerHTML = newFooter.innerHTML;
+              currentFooter.style.display = cartData.item_count > 0 ? 'block' : 'none';
+            } else {
+              const drawerInner = currentDrawerContainer.querySelector('#CartDrawer, .cart-drawer__inner, .drawer__inner') || currentDrawerContainer;
+              drawerInner.appendChild(newFooter);
+              newFooter.style.display = cartData.item_count > 0 ? 'block' : 'none';
+            }
+          } else if (currentFooter) {
+            currentFooter.style.display = cartData.item_count > 0 ? 'block' : 'none';
           }
         }
       }

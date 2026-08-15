@@ -11,7 +11,7 @@
     {{ 'product-configurator.css' | asset_url | stylesheet_tag }}
     <script src="{{ 'product-configurator.js' | asset_url }}" defer></script>
 
-    <div class="product-configurator" id="ProductConfigurator" data-product-id="{{ product.id }}">
+    <div class="product-configurator" id="ProductConfigurator" data-product-id="{{ product.id }}" data-base-price="{{ product.selected_or_first_available_variant.price }}">
       <!-- Configurator Title & Description -->
       {% assign config_title = configurator.name.value | default: configurator.name %}
       {% assign config_desc = configurator.description.value | default: configurator.description %}
@@ -53,8 +53,14 @@
       <!-- Live Configured Total Price Footer -->
       <div class="configurator-footer">
         <div class="configurator-price-box">
-          <span class="configurator-price-label">CONFIGURED TOTAL:</span>
-          <span class="configurator-price-amount" id="ConfiguratorLiveTotal">{{ product.selected_or_first_available_variant.price | money }}</span>
+          <div class="configurator-price-breakdown">
+            <span class="configurator-sub-item">Base Price: <strong id="ConfiguratorBasePrice">{{ product.selected_or_first_available_variant.price | money }}</strong></span>
+            <span class="configurator-sub-item configurator-addon-badge" id="ConfiguratorAddonRow" style="display: none;">Add-ons: <strong id="ConfiguratorAddonPrice">+ $0.00</strong></span>
+          </div>
+          <div class="configurator-total-row">
+            <span class="configurator-price-label">TOTAL:</span>
+            <span class="configurator-price-amount" id="ConfiguratorLiveTotal">{{ product.selected_or_first_available_variant.price | money }}</span>
+          </div>
         </div>
 
         <div class="configurator-actions">
@@ -74,64 +80,85 @@
         "description": {{ configurator.description.value | default: configurator.description | json }},
         "steps": [
           {% assign steps_list = configurator.steps.value | default: configurator.steps %}
+          {% assign first_step = true %}
           {% for step in steps_list %}
             {% assign step_active = step.active.value %}{% if step_active == nil %}{% assign step_active = step.active %}{% endif %}
             {% unless step_active == false %}
+              {% unless first_step %},{% endunless %}
+              {% assign first_step = false %}
               {
-                "title": {{ step.title.value | default: step.title | json }},
-                "handleStep": {{ step.handleStep.value | default: step.handleStep | json }},
+                "title": {{ step.title.value | default: step.title | default: step.name.value | default: step.name | json }},
+                "handleStep": {{ step.handleStep.value | default: step.handleStep | default: step.handle.value | default: step.handle | json }},
                 "step_number": {{ step.step_number.value | default: step.step_number | default: forloop.index | plus: 0 }},
                 "description": {{ step.description.value | default: step.description | json }},
                 "fields": [
                   {% assign fields_list = step.fields.value | default: step.fields %}
+                  {% assign first_field = true %}
                   {% for field in fields_list %}
-                    {
-                      "label": {{ field.label.value | default: field.label | json }},
-                      "handleField": {{ field.handleField.value | default: field.handleField | default: field.label.value | default: field.label | json }},
-                      "field_type": {{ field.field_type.value | default: field.field_type | json }},
-                      "requiredField": {% assign req = field.requiredField.value %}{% if req == nil %}{% assign req = field.requiredField %}{% endif %}{% if req == true or req == 'true' %}true{% else %}false{% endif %},
-                      "description": {{ field.description.value | default: field.description | json }},
-                      "placeholder": {{ field.placeholder.value | default: field.placeholder | json }},
-                      "default_value": {{ field.default_value.value | default: field.default_value | json }},
-                      "sort_order": {{ field.sort_order.value | default: field.sort_order | default: forloop.index | plus: 0 }},
-                      "options": [
-                        {% assign options_list = field.options.value | default: field.options %}
-                        {% for option in options_list %}
-                          {% assign opt_active = option.active.value %}{% if opt_active == nil %}{% assign opt_active = option.active %}{% endif %}
-                          {% unless opt_active == false %}
-                            {% assign raw_label_obj = option.label.value | default: option.label %}
-                            {% assign raw_label = raw_label_obj.value | default: raw_label_obj | append: '' %}
-                            {% assign raw_val_obj = option.value.value | default: option.value %}
-                            {% assign raw_val = raw_val_obj.value | default: raw_val_obj | append: '' %}
-
-                            {% if raw_val == blank or raw_val contains 'Drop' or raw_val == 'true' or raw_val == 'false' %}
-                              {% assign raw_val = raw_label %}
-                            {% endif %}
-                            {% assign opt_variant_obj = option.variant.value | default: option.product_variant.value | default: option.variant | default: option.product_variant %}
-                            {% assign opt_variant_id = option.variant_id.value | default: option.variant_id | default: opt_variant_obj.id %}
-                            {
-                              "label": {{ raw_label | json }},
-                              "value": {{ raw_val | json }},
-                              "description": {{ option.description.value | default: option.description | json }},
-                              "price_adjustment": {{ option.price_adjustment.value | default: option.price_adjustment | default: 0 | plus: 0 }},
-                              "variant_id": {{ opt_variant_id | json }},
-                              "sort_order": {{ option.sort_order.value | default: option.sort_order | default: forloop.index | plus: 0 }}
-                            }{% unless forloop.last %},{% endunless %}
-                          {% endunless %}
-                        {% endfor %}
-                      ]
-                    }{% unless forloop.last %},{% endunless %}
+                    {% assign field_active = field.active.value %}{% if field_active == nil %}{% assign field_active = field.active %}{% endif %}
+                    {% unless field_active == false %}
+                      {% unless first_field %},{% endunless %}
+                      {% assign first_field = false %}
+                      {% assign f_label = field.label.value | default: field.label | default: field.name.value | default: field.name | default: field.title.value | default: field.title %}
+                      {% assign f_handle = field.handleField.value | default: field.handleField | default: field.handle.value | default: field.handle | default: f_label %}
+                      {
+                        "label": {{ f_label | json }},
+                        "handleField": {{ f_handle | json }},
+                        "field_type": {{ field.field_type.value | default: field.field_type | default: 'radio' | json }},
+                        "requiredField": {% assign req = field.requiredField.value %}{% if req == nil %}{% assign req = field.requiredField %}{% endif %}{% if req == true or req == 'true' %}true{% else %}false{% endif %},
+                        "description": {{ field.description.value | default: field.description | json }},
+                        "placeholder": {{ field.placeholder.value | default: field.placeholder | json }},
+                        "default_value": {{ field.default_value.value | default: field.default_value | json }},
+                        "sort_order": {{ field.sort_order.value | default: field.sort_order | default: forloop.index | plus: 0 }},
+                        "options": [
+                          {% assign options_list = field.options.value | default: field.options %}
+                          {% assign first_opt = true %}
+                          {% for option in options_list %}
+                            {% assign opt_active = option.active.value %}{% if opt_active == nil %}{% assign opt_active = option.active %}{% endif %}
+                            {% unless opt_active == false %}
+                              {% unless first_opt %},{% endunless %}
+                              {% assign first_opt = false %}
+                              {% assign raw_label = option.label.value | default: option.label | default: option.name.value | default: option.name | default: option.title.value | default: option.title %}
+                              {% assign opt_variant_obj = option.variant.value | default: option.product_variant.value | default: option.variant | default: option.product_variant %}
+                              {% if raw_label == blank and opt_variant_obj != blank %}
+                                {% assign raw_label = opt_variant_obj.title | default: opt_variant_obj.name %}
+                              {% endif %}
+                              {% assign raw_val = option.value.value | default: option.value | default: option.handle.value | default: option.handle | default: raw_label %}
+                              {% if raw_val == blank or raw_val contains 'Drop' or raw_val == 'true' or raw_val == 'false' %}
+                                {% assign raw_val = raw_label %}
+                              {% endif %}
+                              {% assign opt_price_adj = option.price_adjustment.value | default: option.price_adjustment | default: option.price.value | default: option.price | default: 0 | plus: 0 %}
+                              {% if opt_price_adj == 0 and opt_variant_obj.price != blank %}
+                                {% assign opt_price_adj = opt_variant_obj.price | plus: 0 %}
+                              {% endif %}
+                              {% assign opt_variant_id = option.variant_id.value | default: option.variant_id | default: opt_variant_obj.id %}
+                              {
+                                "label": {{ raw_label | json }},
+                                "value": {{ raw_val | json }},
+                                "description": {{ option.description.value | default: option.description | json }},
+                                "price_adjustment": {{ opt_price_adj }},
+                                "variant_id": {{ opt_variant_id | json }},
+                                "sort_order": {{ option.sort_order.value | default: option.sort_order | default: forloop.index | plus: 0 }}
+                              }
+                            {% endunless %}
+                          {% endfor %}
+                        ]
+                      }
+                    {% endunless %}
                   {% endfor %}
                 ]
-              }{% unless forloop.last %},{% endunless %}
+              }
             {% endunless %}
           {% endfor %}
         ],
         "rules": [
           {% assign rules_list = configurator.rules.value | default: configurator.rules %}
+          {% assign first_rule = true %}
           {% for rule in rules_list %}
             {% assign rule_active = rule.active.value %}{% if rule_active == nil %}{% assign rule_active = rule.active %}{% endif %}
             {% unless rule_active == false %}
+              {% unless first_rule %},{% endunless %}
+              {% assign first_rule = false %}
               {% comment %} Resolve condition_field reference or string {% endcomment %}
               {% assign cond_obj = rule.condition_field.value | default: rule.condition_field %}
               {% assign cond_str = cond_obj.handleField.value | default: cond_obj.handleField | default: cond_obj.label.value | default: cond_obj.label | default: cond_obj %}
@@ -147,7 +174,7 @@
                 "condition_value": {{ rule.condition_value.value | default: rule.condition_value | json }},
                 "actionRule": {{ rule.actionRule.value | default: rule.actionRule | json }},
                 "target_field": {{ target_str | json }}
-              }{% unless forloop.last %},{% endunless %}
+              }
             {% endunless %}
           {% endfor %}
         ]

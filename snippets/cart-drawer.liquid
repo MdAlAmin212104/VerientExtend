@@ -444,9 +444,20 @@
                 <div class="cart-drawer__item-bottom">
                   <div class="cart-drawer__item-price">
                     {% assign item_config_price = item.properties['_configured_price'] %}
+                    {% assign item_base_cents = item.properties['_base_price_cents'] | plus: 0 %}
+                    {% assign item_total_cents = item.properties['_total_price_cents'] | plus: 0 %}
+                    {% assign item_addon_cents = item_total_cents | minus: item_base_cents %}
+                    
                     {% if item_config_price != blank %}
-                      <span class="price-main">{{ item_config_price }}</span>
-                      <span class="price-base">(Base: {{ item.final_line_price | money }})</span>
+                      <div class="cart-drawer__price-breakdown">
+                        <span class="price-main" style="font-weight: 800; font-size: 1rem; color: #0f172a;">{{ item_config_price }}</span>
+                        <div class="price-breakdown-sub" style="font-size: 0.775rem; color: #475569; display: flex; flex-direction: column; gap: 0.15rem; margin-top: 0.2rem;">
+                          <span>Base: <strong>{{ item_base_cents | default: item.original_price | money }}</strong></span>
+                          {% if item_addon_cents > 0 %}
+                            <span style="color: #059669; font-weight: 700;">Add-ons: +{{ item_addon_cents | money }}</span>
+                          {% endif %}
+                        </div>
+                      </div>
                     {% else %}
                       <span class="price-main">{{ item.final_line_price | money }}</span>
                     {% endif %}
@@ -474,19 +485,28 @@
       {% endif %}
     </div>
 
-    {% if cart.item_count > 0 %}
-      <div class="cart-drawer__footer" id="CartDrawerFooter">
-        <div class="cart-drawer__footer-totals">
-          <span class="cart-drawer__footer-label">Estimated Total</span>
-          <span class="cart-drawer__footer-val">{{ cart.total_price | money_with_currency }}</span>
-        </div>
-        <p class="cart-drawer__tax-note">Taxes and shipping calculated at checkout.</p>
-        <form action="{{ routes.cart_url }}" method="post">
-          <button type="submit" name="checkout" class="cart-drawer__checkout-btn">
-            Check Out
-          </button>
-        </form>
+    {% assign effective_cart_total = 0 %}
+    {% for item in cart.items %}
+      {% assign item_total_cents = item.properties['_total_price_cents'] | plus: 0 %}
+      {% if item_total_cents > 0 %}
+        {% assign item_line_cents = item_total_cents | times: item.quantity %}
+        {% assign effective_cart_total = effective_cart_total | plus: item_line_cents %}
+      {% else %}
+        {% assign effective_cart_total = effective_cart_total | plus: item.final_line_price %}
+      {% endif %}
+    {% endfor %}
+
+    <div class="cart-drawer__footer" id="CartDrawerFooter" {% if cart.item_count == 0 %}style="display: none;"{% endif %}>
+      <div class="cart-drawer__footer-totals">
+        <span class="cart-drawer__footer-label">Estimated Total</span>
+        <span class="cart-drawer__footer-val" id="CartDrawerTotal">{{ effective_cart_total | money_with_currency }}</span>
       </div>
-    {% endif %}
+      <p class="cart-drawer__tax-note">Taxes and shipping calculated at checkout.</p>
+      <form action="{{ routes.cart_url }}" method="post" id="CartDrawerForm">
+        <button type="submit" name="checkout" class="cart-drawer__checkout-btn" id="CartDrawerCheckoutBtn">
+          Check Out
+        </button>
+      </form>
+    </div>
   </div>
 </div>
