@@ -16,10 +16,6 @@
     "1786789079754f4129": {
       "type": "apps",
       "blocks": {
-        "cart_transform_saved_cart_page_HEYi6L": {
-          "type": "shopify://apps/cart-transform/blocks/saved_cart_page/01a004e7-5bd6-7bca-89a4-49cad39e92a5",
-          "settings": {}
-        },
         "cart_transform_save_cart_button_jVwety": {
           "type": "shopify://apps/cart-transform/blocks/save_cart_button/01a004e7-5bd6-7bca-89a4-49cad39e92a5",
           "settings": {
@@ -32,7 +28,6 @@
         }
       },
       "block_order": [
-        "cart_transform_saved_cart_page_HEYi6L",
         "cart_transform_save_cart_button_jVwety"
       ],
       "settings": {}
