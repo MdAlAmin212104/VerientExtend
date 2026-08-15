@@ -673,12 +673,14 @@ class ProductConfiguratorEngine {
 
     // 3. Build Line Item Properties & Cart Transform Attributes
     const selectedAddonGids = [];
+    const mainVariantCleanId = String(selectedVariantId).replace(/[^0-9]/g, '');
+
     Object.keys(this.selections).forEach(handleField => {
       if (this.visibility[handleField] !== false) {
         const sel = this.selections[handleField];
         if (sel && sel.variant_id) {
           const cleanId = String(sel.variant_id).replace(/[^0-9]/g, '');
-          if (cleanId) {
+          if (cleanId && cleanId !== mainVariantCleanId) {
             selectedAddonGids.push(`gid://shopify/ProductVariant/${cleanId}`);
           }
         }
