@@ -107,11 +107,14 @@
                             {% if raw_val == blank or raw_val contains 'Drop' or raw_val == 'true' or raw_val == 'false' %}
                               {% assign raw_val = raw_label %}
                             {% endif %}
+                            {% assign opt_variant_obj = option.variant.value | default: option.product_variant.value | default: option.variant | default: option.product_variant %}
+                            {% assign opt_variant_id = option.variant_id.value | default: option.variant_id | default: opt_variant_obj.id %}
                             {
                               "label": {{ raw_label | json }},
                               "value": {{ raw_val | json }},
                               "description": {{ option.description.value | default: option.description | json }},
                               "price_adjustment": {{ option.price_adjustment.value | default: option.price_adjustment | default: 0 | plus: 0 }},
+                              "variant_id": {{ opt_variant_id | json }},
                               "sort_order": {{ option.sort_order.value | default: option.sort_order | default: forloop.index | plus: 0 }}
                             }{% unless forloop.last %},{% endunless %}
                           {% endunless %}

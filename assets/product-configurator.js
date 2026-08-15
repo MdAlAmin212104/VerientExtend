@@ -73,7 +73,8 @@ class ProductConfiguratorEngine {
                 value: defaultOpt.value,
                 label: defaultOpt.label,
                 price_adjustment: parseInt(defaultOpt.price_adjustment || 0, 10),
-                fieldLabel: field.label
+                fieldLabel: field.label,
+                variant_id: defaultOpt.variant_id || null
               };
             }
           }
@@ -383,7 +384,8 @@ class ProductConfiguratorEngine {
                   value: opt.value,
                   label: opt.label,
                   price_adjustment: parseInt(opt.price_adjustment || 0, 10),
-                  fieldLabel: field.label
+                  fieldLabel: field.label,
+                  variant_id: opt.variant_id || null
                 };
               }
               this.onFieldChange();
@@ -425,7 +427,8 @@ class ProductConfiguratorEngine {
                 value: opt.value,
                 label: opt.label,
                 price_adjustment: parseInt(opt.price_adjustment || 0, 10),
-                fieldLabel: field.label
+                fieldLabel: field.label,
+                variant_id: opt.variant_id || null
               };
             } else {
               delete this.selections[field.handleField];
@@ -624,13 +627,35 @@ class ProductConfiguratorEngine {
     const totalCents = basePriceCents + addersCents;
     const formattedConfiguredPrice = this.formatMoney(totalCents);
 
-    // 3. Build Line Item Properties from Active Visible Selections
-    // Private property starting with _ for internal total calculation
+    // 3. Build Line Item Properties & Cart Transform Attributes
+    const selectedAddonGids = [];
+    Object.keys(this.selections).forEach(handleField => {
+      if (this.visibility[handleField] !== false) {
+        const sel = this.selections[handleField];
+        if (sel && sel.variant_id) {
+          const cleanId = String(sel.variant_id).replace(/[^0-9]/g, '');
+          if (cleanId) {
+            selectedAddonGids.push(`gid://shopify/ProductVariant/${cleanId}`);
+          }
+        }
+      }
+    });
+
+    const bundleId = `bundle_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+
+    // Private properties for Cart Transform API & backend calculation (starts with _)
     const properties = {
-      '_configured_price': formattedConfiguredPrice
+      '_configured_price': formattedConfiguredPrice,
+      '_bundle_id': bundleId,
+      '_base_price_cents': String(basePriceCents),
+      '_total_price_cents': String(totalCents)
     };
 
-    // Public properties displayed to customer
+    if (selectedAddonGids.length > 0) {
+      properties['_addon_variants'] = selectedAddonGids.join(',');
+    }
+
+    // Public properties displayed to customer on cart & checkout
     Object.keys(this.selections).forEach(handleField => {
       if (this.visibility[handleField] !== false) {
         const sel = this.selections[handleField];
