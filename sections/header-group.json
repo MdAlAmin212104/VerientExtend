@@ -14,6 +14,20 @@
     "announcement_bar_Ud3dQj": {
       "type": "announcement-bar",
       "blocks": {
+        "announcement_BUnBKh": {
+          "type": "announcement",
+          "settings": {
+            "text": "Welcome to our store!",
+            "link": ""
+          }
+        },
+        "announcement_LRfghC": {
+          "type": "announcement",
+          "settings": {
+            "text": "Welcome to our store!",
+            "link": ""
+          }
+        },
         "announcement_EyCwmK": {
           "type": "announcement",
           "settings": {
@@ -44,6 +58,8 @@
         }
       },
       "block_order": [
+        "announcement_BUnBKh",
+        "announcement_LRfghC",
         "announcement_EyCwmK",
         "announcement_kxJNc8",
         "announcement_rGfNLt",
