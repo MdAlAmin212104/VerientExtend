@@ -503,7 +503,7 @@
         <span class="cart-drawer__footer-val" id="CartDrawerTotal">{{ effective_cart_total | money_with_currency }}</span>
       </div>
       <p class="cart-drawer__tax-note">Taxes and shipping calculated at checkout.</p>
-      <button type="button" class="saved-cart-button" data-saved-cart-trigger>Share Cart Link</button>
+      {% if customer %} <button type="button" class="saved-cart-button" data-saved-cart-trigger>Share Cart Link</button> {% endif %}
       <form action="{{ routes.cart_url }}" method="post" id="CartDrawerForm">
         <button type="submit" name="checkout" class="cart-drawer__checkout-btn" id="CartDrawerCheckoutBtn">
           Check Out
