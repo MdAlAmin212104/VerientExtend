@@ -12,30 +12,9 @@
     "main": {
       "type": "hello-world",
       "settings": {}
-    },
-    "custom_section_bxNYGL": {
-      "type": "custom-section",
-      "blocks": {
-        "text_kNBQ49": {
-          "type": "text",
-          "name": "t:general.text",
-          "settings": {
-            "text": "Text",
-            "text_style": "text--title",
-            "alignment": "left"
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "text_kNBQ49"
-      ],
-      "name": "t:general.custom_section",
-      "settings": {}
     }
   },
   "order": [
-    "main",
-    "custom_section_bxNYGL"
+    "main"
   ]
 }
