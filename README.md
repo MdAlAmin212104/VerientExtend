@@ -1,160 +1,232 @@
-<h1 align="center" style="position: relative;">
-  <br>
-    <img src="./assets/shoppy-x-ray.svg" alt="logo" width="200">
-  <br>
-  Shopify Skeleton Theme
-</h1>
+# Shopify Storefront – Technical Assignment & Theme Documentation
 
-A minimal, carefully structured Shopify theme designed to help you quickly get started. Designed with modularity, maintainability, and Shopify's best practices in mind.
+A modern, high-performance **Shopify Online Store 2.0** theme built with modular architecture, custom Metaobject-driven interactive configurators, wholesale access control, dynamic AJAX cart systems, and centralized analytics integrations.
 
-<p align="center">
-  <a href="./LICENSE.md"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
-  <a href="./actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shopify/skeleton-theme/actions/workflows/ci.yml/badge.svg"></a>
-</p>
+---
 
-## Getting started
+## 📋 Table of Contents
+
+- [Quick Start: Previewing the Theme](#-quick-start-previewing-the-theme)
+  - [Prerequisites](#prerequisites)
+  - [Method 1: Shopify CLI Local Preview (Recommended)](#method-1-shopify-cli-local-preview-recommended)
+  - [Method 2: Upload as ZIP File via Shopify Admin](#method-2-upload-as-zip-file-via-shopify-admin)
+  - [Method 3: Push as an Unpublished Theme via CLI](#method-3-push-as-an-unpublished-theme-via-cli)
+- [Key Features & Technical Implementations](#-key-features--technical-implementations)
+  - [1. Multi-Step Product Configurator Engine](#1-multi-step-product-configurator-engine)
+  - [2. Wholesale / B2B Gating & Access Control](#2-wholesale--b2b-gating--access-control)
+  - [3. Modern Cart Architecture (Drawer & Page)](#3-modern-cart-architecture-drawer--page)
+  - [4. Marketing, Tracking & Live Chat Integrations](#4-marketing-tracking--live-chat-integrations)
+  - [5. Expivi 3D Product Visualization](#5-expivi-3d-product-visualization)
+- [Metaobject & Metafield Data Schema](#-metaobject--metafield-data-schema)
+- [Directory & Theme Architecture](#-directory--theme-architecture)
+- [Theme Settings & Customization](#-theme-settings--customization)
+- [Development & Code Quality Standards](#-development--code-quality-standards)
+
+---
+
+## 🚀 Quick Start: Previewing the Theme
+
+Follow these straightforward instructions to preview and test the complete theme on any Shopify development store without manual setup hurdles.
 
 ### Prerequisites
 
-Before starting, ensure you have the latest Shopify CLI installed:
+Ensure the following tools are installed on your machine:
+- **Node.js**: v18.0.0 or higher ([Download Node.js](https://nodejs.org/))
+- **Shopify CLI**: v3.x or higher
+  ```bash
+  npm install -g @shopify/cli @shopify/theme
+  ```
+- Access to a **Shopify Partner / Development Store**.
 
-- [Shopify CLI](https://shopify.dev/docs/api/shopify-cli) – helps you download, upload, preview themes, and streamline your workflows
+---
 
-If you use VS Code:
+### Method 1: Shopify CLI Local Preview (Recommended)
 
-- [Shopify Liquid VS Code Extension](https://shopify.dev/docs/storefronts/themes/tools/shopify-liquid-vscode) – provides syntax highlighting, linting, inline documentation, and auto-completion specifically designed for Liquid templates
+Run a local development server with hot-reload and direct Storefront / Theme Editor synchronization.
 
-### Clone
+1. **Clone or navigate to the project directory:**
+   ```bash
+   cd Assignment
+   ```
 
-Clone this repository using Git or Shopify CLI:
+2. **Authenticate and launch the development server:**
+   ```bash
+   shopify theme dev --store your-dev-store.myshopify.com
+   ```
+
+3. **Interact with the generated endpoints in your terminal:**
+   - **Local Storefront Preview**: `http://127.0.0.1:9292`
+   - **Theme Editor (Customizer) URL**: `https://your-dev-store.myshopify.com/admin/themes/.../editor`
+   - **Hot-Reloading**: Changes to `.liquid`, `.css`, or `.js` will automatically sync in real-time.
+
+---
+
+### Method 2: Upload as ZIP File via Shopify Admin
+
+To preview directly in Shopify Admin without running the CLI locally:
+
+1. **Package the theme into a `.zip` archive:**
+   - Ensure the root of the `.zip` archive contains `layout/`, `templates/`, `sections/`, `snippets/`, `assets/`, `config/`, and `locales/`.
+2. **Go to Shopify Admin:**
+   - Navigate to **Online Store** > **Themes**.
+   - Under the **Theme Library** section, click **Add Theme** > **Upload zip file**.
+   - Choose the generated `.zip` file and click **Upload file**.
+3. **Preview & Test:**
+   - Once uploaded, click **Actions** (`...`) > **Preview** to view the live storefront.
+   - Click **Customize** to test Theme Settings (Cart Drawer toggle, Analytics Pixel inputs, Tawk.to Live Chat, etc.).
+
+---
+
+### Method 3: Push as an Unpublished Theme via CLI
+
+Push the codebase as a standalone draft theme directly to your development store:
 
 ```bash
-git clone git@github.com:Shopify/skeleton-theme.git
-# or
-shopify theme init
+shopify theme push --unpublished --theme "Assessment - Skeleton Extended" --store your-dev-store.myshopify.com
 ```
 
-### Preview
+The CLI will output a direct preview link and a Theme Customizer link.
 
-Preview this theme using Shopify CLI:
+---
 
-```bash
-shopify theme dev
+## 🛠 Key Features & Technical Implementations
+
+### 1. Multi-Step Product Configurator Engine
+- **Metaobject Driven**: Powered by Shopify Metaobjects (`custom.configurator`) attached to products via metafields.
+- **Dynamic Rule Evaluation**: Client-side rule engine evaluated in [product-configurator.js](file:///c:/Users/alami/Desktop/Assignment/assets/product-configurator.js) supporting conditional dependencies, hidden options, auto-selections, and add-on price calculations.
+- **Real-Time Total Recalculation**: Dynamically updates the base variant price with selected add-on totals before checkout.
+- **Line Item Property Preservation**: Formats all user choices into clean Shopify Cart Line Item Properties (`_config_...` and human-readable property keys) for order processing.
+- **Summary Cards & Navigation**: Allows shoppers to review previous choices, jump between steps, or edit configurations effortlessly.
+
+### 2. Wholesale / B2B Gating & Access Control
+- **Gated Product Detection**: Products tagged with `wholesale` / `wholesale-only` or with metafield `custom.wholesale = true` are restricted.
+- **Customer Tag Verification**: Liquid checks `customer.tags contains 'wholesale'`.
+- **Search & Collection Filtering**: Wholesale-restricted products are automatically excluded from public collection grids, collections lists, and search queries for non-wholesale visitors.
+- **Access Gate Display**: Direct navigation to a wholesale product page renders a dedicated lock screen prompting the user to log in with verified wholesale credentials.
+
+### 3. Modern Cart Architecture (Drawer & Page)
+- **AJAX Slide-Out Cart Drawer** ([cart-drawer.liquid](file:///c:/Users/alami/Desktop/Assignment/snippets/cart-drawer.liquid) & [cart-drawer.js](file:///c:/Users/alami/Desktop/Assignment/assets/cart-drawer.js)):
+  - Backdrop blur overlay with smooth slide transition.
+  - Real-time quantity adjustments and item removal via Shopify Cart API.
+  - Fully renders custom line-item properties and configurator add-on summaries.
+  - Order notes input and free shipping / subtotal breakdown.
+- **Dedicated Full Cart Page** ([cart.liquid](file:///c:/Users/alami/Desktop/Assignment/sections/cart.liquid)):
+  - Comprehensive table layout with responsive mobile cards.
+  - Configurable in Theme Settings to choose between **Slide-Out Drawer** or **Cart Page Redirect**.
+
+### 4. Marketing, Tracking & Live Chat Integrations
+- Centralized tracking snippet ([analytics-pixels.liquid](file:///c:/Users/alami/Desktop/Assignment/snippets/analytics-pixels.liquid)) configurable via Theme Settings (`config/settings_schema.json`):
+  - **Google Analytics 4 (GA4)**: Configurable Measurement ID (`G-XXXXXXXXXX`).
+  - **Meta / Facebook Pixel**: Configurable Pixel ID with standard PageView & ViewContent events.
+  - **TikTok Pixel**: Configurable Pixel ID.
+  - **Pinterest Tag**: Configurable Conversion Tag ID.
+  - **Google Ads Conversion Tracking**: Configurable Conversion ID & Label.
+- **Tawk.to Live Chat** ([tawkto-chat.liquid](file:///c:/Users/alami/Desktop/Assignment/snippets/tawkto-chat.liquid)): Enable/disable toggle and custom widget path setting.
+
+### 5. Expivi 3D Product Visualization
+- Interactive 3D viewer snippet ([expivi-viewer.liquid](file:///c:/Users/alami/Desktop/Assignment/snippets/expivi-viewer.liquid)) allowing 360° interactive product inspection for products with metafield `custom.expivi_project_id` or tag `expivi-3d`.
+
+---
+
+## 🗄 Metaobject & Metafield Data Schema
+
+To test the Product Configurator with full dynamic capabilities, configure the following Metaobject definition in Shopify Admin (**Settings > Custom Data > Metaobjects**):
+
+### Metaobject: `configurator` (`custom.configurator`)
+
+| Field Name | Key | Type | Description |
+| :--- | :--- | :--- | :--- |
+| **Name** | `name` | Single line text | Configurator display name |
+| **Handle** | `handleConfigurator` | Single line text | Unique handle identifier |
+| **Description** | `description` | Multi-line text | Subtitle / guidance text |
+| **Active** | `active` | True / False | Enable / disable toggle |
+| **Steps** | `steps` | List of Metaobjects / JSON | Step definitions, options, and rules |
+
+#### Sample Step Configuration JSON:
+```json
+[
+  {
+    "step_id": "step_material",
+    "title": "Select Base Material",
+    "required": true,
+    "options": [
+      { "label": "Brushed Aluminum", "value": "aluminum", "price": 0 },
+      { "label": "Matte Carbon Fiber", "value": "carbon", "price": 2500 }
+    ]
+  },
+  {
+    "step_id": "step_finish",
+    "title": "Custom Finish",
+    "required": false,
+    "options": [
+      { "label": "Gloss Coating", "value": "gloss", "price": 1000 },
+      { "label": "UV Protection Shield", "value": "uv", "price": 1500 }
+    ]
+  }
+]
 ```
 
-## Theme architecture
+---
+
+## 📁 Directory & Theme Architecture
 
 ```bash
 .
-├── assets          # Stores static assets (CSS, JS, images, fonts, etc.)
-├── blocks          # Reusable, nestable, customizable UI components
-├── config          # Global theme settings and customization options
-├── layout          # Top-level wrappers for pages (layout templates)
-├── locales         # Translation files for theme internationalization
-├── sections        # Modular full-width page components
-├── snippets        # Reusable Liquid code or HTML fragments
-└── templates       # Templates combining sections to define page structures
+├── assets/
+│   ├── cart-drawer.js             # AJAX cart drawer controller & DOM management
+│   ├── critical.css               # Core styling & critical rendering path rules
+│   ├── product-configurator.css   # Multi-step configurator responsive styling
+│   └── product-configurator.js    # Rule engine, price math, and step validation
+├── config/
+│   ├── settings_data.json         # Current theme setting values & defaults
+│   └── settings_schema.json       # Admin schema: Cart type, Pixels, Live Chat, Fonts
+├── layout/
+│   └── theme.liquid               # Master document wrapper with modular snippet includes
+├── sections/
+│   ├── announcement-bar.liquid    # Promotional top announcement banner
+│   ├── cart.liquid                # Full-page cart template with line item properties
+│   ├── collection.liquid          # Filterable collection template with wholesale gate
+│   ├── collections.liquid         # Collections list showcase
+│   ├── header.liquid              # Sticky header, desktop & mobile navigation drawer
+│   ├── product.liquid             # Dawn-inspired PDP with media gallery & configurator
+│   └── search.liquid              # Search page with wholesale access filtering
+├── snippets/
+│   ├── analytics-pixels.liquid    # GA4, Meta, TikTok, Pinterest & Google Ads tags
+│   ├── cart-drawer.liquid         # Slide-out AJAX cart drawer markup & styling
+│   ├── expivi-viewer.liquid       # 3D interactive product visualization viewer
+│   ├── product-configurator.liquid# Configurator Liquid renderer & JSON payload exporter
+│   └── tawkto-chat.liquid         # Tawk.to live chat widget embed
+└── templates/                     # Shopify Online Store 2.0 JSON templates
 ```
 
-To learn more, refer to the [theme architecture documentation](https://shopify.dev/docs/storefronts/themes/architecture).
+---
 
-### Templates
+## ⚙️ Theme Settings & Customization
 
-[Templates](https://shopify.dev/docs/storefronts/themes/architecture/templates#template-types) control what's rendered on each type of page in a theme.
+All major components can be configured through the **Shopify Theme Customizer**:
 
-The Skeleton Theme scaffolds [JSON templates](https://shopify.dev/docs/storefronts/themes/architecture/templates/json-templates) to make it easy for merchants to customize their store.
+1. **Cart Behavior**:
+   - Go to **Theme Settings > Cart**.
+   - Choose between **Open Slide-out Cart Drawer** or **Redirect to Cart Page**.
+2. **Analytics & Tracking**:
+   - Go to **Theme Settings > Analytics & Tracking**.
+   - Toggle **Google Analytics 4**, **Meta Pixel**, **TikTok Pixel**, **Pinterest Tag**, or **Google Ads**, and input your respective tracking IDs.
+3. **Live Chat**:
+   - Go to **Theme Settings > Live Chat**.
+   - Enable/Disable the widget and configure your **Tawk.to Property/Widget Path**.
 
-None of the template types are required, and not all of them are included in the Skeleton Theme. Refer to the [template types reference](https://shopify.dev/docs/storefronts/themes/architecture/templates#template-types) for a full list.
+---
 
-### Sections
+## 🏆 Development & Code Quality Standards
 
-[Sections](https://shopify.dev/docs/storefronts/themes/architecture/sections) are Liquid files that allow you to create reusable modules of content that can be customized by merchants. They can also include blocks which allow merchants to add, remove, and reorder content within a section.
+- **Online Store 2.0 Architecture**: Strictly utilizes modular JSON templates, sections, snippets, and theme blocks.
+- **Vanilla JavaScript**: Lightweight, performant ES6+ JavaScript without reliance on heavy external libraries like jQuery.
+- **Liquid Best Practices**: Clean filters, strict defensive null checks, and minimal layout shift.
+- **Accessibility & Responsiveness**: Semantic HTML5 markup, ARIA roles for modals/drawers, keyboard navigability, and responsive layouts across desktop, tablet, and mobile.
 
-Sections are made customizable by including a `{% schema %}` in the body. For more information, refer to the [section schema documentation](https://shopify.dev/docs/storefronts/themes/architecture/sections/section-schema).
+---
 
-### Blocks
-
-[Blocks](https://shopify.dev/docs/storefronts/themes/architecture/blocks) let developers create flexible layouts by breaking down sections into smaller, reusable pieces of Liquid. Each block has its own set of settings, and can be added, removed, and reordered within a section.
-
-Blocks are made customizable by including a `{% schema %}` in the body. For more information, refer to the [block schema documentation](https://shopify.dev/docs/storefronts/themes/architecture/blocks/theme-blocks/schema).
-
-## Schemas
-
-When developing components defined by schema settings, we recommend these guidelines to simplify your code:
-
-- **Single property settings**: For settings that correspond to a single CSS property, use CSS variables:
-
-  ```liquid
-  <div class="collection" style="--gap: {{ block.settings.gap }}px">
-    ...
-  </div>
-
-  {% stylesheet %}
-    .collection {
-      gap: var(--gap);
-    }
-  {% endstylesheet %}
-
-  {% schema %}
-  {
-    "settings": [{
-      "type": "range",
-      "label": "gap",
-      "id": "gap",
-      "min": 0,
-      "max": 100,
-      "unit": "px",
-      "default": 0,
-    }]
-  }
-  {% endschema %}
-  ```
-
-- **Multiple property settings**: For settings that control multiple CSS properties, use CSS classes:
-
-  ```liquid
-  <div class="collection {{ block.settings.layout }}">
-    ...
-  </div>
-
-  {% stylesheet %}
-    .collection--full-width {
-      /* multiple styles */
-    }
-    .collection--narrow {
-      /* multiple styles */
-    }
-  {% endstylesheet %}
-
-  {% schema %}
-  {
-    "settings": [{
-      "type": "select",
-      "id": "layout",
-      "label": "layout",
-      "values": [
-        { "value": "collection--full-width", "label": "t:options.full" },
-        { "value": "collection--narrow", "label": "t:options.narrow" }
-      ]
-    }]
-  }
-  {% endschema %}
-  ```
-
-## CSS & JavaScript
-
-For CSS and JavaScript, we recommend using the [`{% stylesheet %}`](https://shopify.dev/docs/api/liquid/tags#stylesheet) and [`{% javascript %}`](https://shopify.dev/docs/api/liquid/tags/javascript) tags. They can be included multiple times, but the code will only appear once.
-
-### `critical.css`
-
-The Skeleton Theme explicitly separates essential CSS necessary for every page into a dedicated `critical.css` file.
-
-## Contributing
-
-We're excited for your contributions to the Skeleton Theme! This repository aims to remain as lean, lightweight, and fundamental as possible, and we kindly ask your contributions to align with this intention.
-
-Visit our [CONTRIBUTING.md](./CONTRIBUTING.md) for a detailed overview of our process, guidelines, and recommendations.
-
-## License
-
-Skeleton Theme is open-sourced under the [MIT](./LICENSE.md) License.
+### Author & Assignment Details
+- **Project**: Shopify Developer Technical Assessment
+- **Theme**: Skeleton Extended (OS 2.0)
+- **Status**: Production-Ready / Review Ready
