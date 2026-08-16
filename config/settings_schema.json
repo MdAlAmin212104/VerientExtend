@@ -125,28 +125,6 @@
     ]
   },
   {
-    "name": "Expivi 3D Viewer",
-    "settings": [
-      {
-        "type": "header",
-        "content": "Expivi 3D Product Visualization"
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_expivi_global",
-        "label": "Enable Expivi 3D Viewer",
-        "default": true,
-        "info": "Enable Expivi 3D Viewer integration on product pages."
-      },
-      {
-        "type": "text",
-        "id": "expivi_client_id",
-        "label": "Expivi Client / Account ID",
-        "info": "Optional global Expivi Client ID or API key."
-      }
-    ]
-  },
-  {
     "name": "Analytics & Tracking",
     "settings": [
       {
