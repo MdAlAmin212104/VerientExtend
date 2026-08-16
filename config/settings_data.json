@@ -21,6 +21,14 @@
     "pinterest_tag_id": "XXXXXXXXXXXXXXXX",
     "enable_google_ads": false,
     "google_ads_conversion_id": "AW-XXXXXXXXX",
-    "google_ads_conversion_label": "XXXXXXXX"
+    "google_ads_conversion_label": "XXXXXXXX",
+    "content_for_index": [],
+    "blocks": {
+      "3104928684415549298": {
+        "type": "shopify://apps/cart-transform/blocks/saved_cart_embed/01a00510-d5d8-7066-967c-f48397e642bf",
+        "disabled": false,
+        "settings": {}
+      }
+    }
   }
 }
