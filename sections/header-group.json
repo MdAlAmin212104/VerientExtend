@@ -51,7 +51,7 @@
       ],
       "name": "Announcement bar",
       "settings": {
-        "auto_rotate": false,
+        "auto_rotate": true,
         "change_slides_speed": 5,
         "background_color": "#121212",
         "text_color": "#ffffff"
