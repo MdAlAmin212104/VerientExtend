@@ -24,8 +24,8 @@
     "google_ads_conversion_label": "XXXXXXXX",
     "content_for_index": [],
     "blocks": {
-      "3104928684415549298": {
-        "type": "shopify://apps/cart-transform/blocks/saved_cart_embed/01a00510-d5d8-7066-967c-f48397e642bf",
+      "18177521418303002112": {
+        "type": "shopify://apps/cart-transform/blocks/saved_cart_embed/01a00aa2-9ac2-7791-b3f6-00765203ab28",
         "disabled": false,
         "settings": {}
       }
