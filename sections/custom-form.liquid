@@ -429,186 +429,196 @@
           <p class="ai-wholesale-form-intro-{{ ai_gen_id }}">{{ section.settings.form_intro }}</p>
         {% endif %}
 
-        {%- form 'contact' -%}
-          <input type="hidden" name="contact[form_type]" value="wholesale_enquiry">
-
-          <div class="ai-wholesale-form-{{ ai_gen_id }}">
-            <div class="ai-wholesale-form-grid-{{ ai_gen_id }}">
-              <div class="ai-wholesale-field-{{ ai_gen_id }}">
-                <label class="ai-wholesale-label-{{ ai_gen_id }}" for="business-name-{{ ai_gen_id }}">
-                  Business Name<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="business-name-{{ ai_gen_id }}"
-                  name="contact[business_name]"
-                  class="ai-wholesale-input-{{ ai_gen_id }}"
-                  placeholder="Your business name"
-                  required
-                >
+        {%- assign contact_form_id = 'contact-form-' | append: ai_gen_id -%}
+        {%- form 'contact', id: contact_form_id -%}
+          {%- if form.posted_successfully? -%}
+            <div class="ai-wholesale-success-{{ ai_gen_id }} active">
+              <div class="ai-wholesale-success-icon-{{ ai_gen_id }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
               </div>
+              <h3 class="ai-wholesale-success-heading-{{ ai_gen_id }}">Thanks for getting in touch.</h3>
+              <p class="ai-wholesale-success-message-{{ ai_gen_id }}">We've received your trade enquiry. We'll review your requirements and get back to you within 1 business day.</p>
+              <p class="ai-wholesale-success-secondary-{{ ai_gen_id }}">We'll discuss product availability, delivery area, pricing and suitable ordering options.</p>
+              <a href="{{ section.settings.back_link | default: '/' }}" class="ai-wholesale-back-button-{{ ai_gen_id }}">Back to Wholesale</a>
+            </div>
+          {%- else -%}
+            <input type="hidden" name="contact[Enquiry Type]" value="B2B Wholesale Enquiry">
+            <input type="hidden" name="contact[Products Interested In]" id="hidden-products-{{ ai_gen_id }}" value="">
 
-              <div class="ai-wholesale-field-{{ ai_gen_id }}">
-                <label class="ai-wholesale-label-{{ ai_gen_id }}" for="contact-name-{{ ai_gen_id }}">
-                  Contact Name<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="contact-name-{{ ai_gen_id }}"
-                  name="contact[name]"
-                  class="ai-wholesale-input-{{ ai_gen_id }}"
-                  placeholder="Your name"
-                  required
-                >
+            {%- if form.errors -%}
+              <div class="ai-wholesale-error-{{ ai_gen_id }} active" style="margin-bottom: 20px; padding: 12px 16px; background-color: #fee2e2; border: 1px solid #ef4444; border-radius: 6px; color: #991b1b;">
+                {{ form.errors | default_errors }}
               </div>
+            {%- endif -%}
 
-              <div class="ai-wholesale-field-{{ ai_gen_id }}">
-                <label class="ai-wholesale-label-{{ ai_gen_id }}" for="email-{{ ai_gen_id }}">
-                  Email Address<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
-                </label>
-                <input
-                  type="email"
-                  id="email-{{ ai_gen_id }}"
-                  name="contact[email]"
-                  class="ai-wholesale-input-{{ ai_gen_id }}"
-                  placeholder="you@business.com"
-                  required
-                  {% if form.errors %}
-                    aria-invalid="true"
-                    aria-describedby="email-error-{{ ai_gen_id }}"
-                  {% endif %}
-                >
-                {%- if form.errors -%}
-                  <div id="email-error-{{ ai_gen_id }}" class="ai-wholesale-error-{{ ai_gen_id }} active">
-                    {{ form.errors.messages.email }}
+            <div class="ai-wholesale-form-{{ ai_gen_id }}">
+              <div class="ai-wholesale-form-grid-{{ ai_gen_id }}">
+                <div class="ai-wholesale-field-{{ ai_gen_id }}">
+                  <label class="ai-wholesale-label-{{ ai_gen_id }}" for="business-name-{{ ai_gen_id }}">
+                    Business Name<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="business-name-{{ ai_gen_id }}"
+                    name="contact[Business Name]"
+                    class="ai-wholesale-input-{{ ai_gen_id }}"
+                    placeholder="Your business name"
+                    required
+                  >
+                </div>
+
+                <div class="ai-wholesale-field-{{ ai_gen_id }}">
+                  <label class="ai-wholesale-label-{{ ai_gen_id }}" for="contact-name-{{ ai_gen_id }}">
+                    Contact Name<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="contact-name-{{ ai_gen_id }}"
+                    name="contact[name]"
+                    class="ai-wholesale-input-{{ ai_gen_id }}"
+                    placeholder="Your name"
+                    required
+                  >
+                </div>
+
+                <div class="ai-wholesale-field-{{ ai_gen_id }}">
+                  <label class="ai-wholesale-label-{{ ai_gen_id }}" for="email-{{ ai_gen_id }}">
+                    Email Address<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    id="email-{{ ai_gen_id }}"
+                    name="contact[email]"
+                    class="ai-wholesale-input-{{ ai_gen_id }}"
+                    placeholder="you@business.com"
+                    required
+                    {% if form.errors contains 'email' %}
+                      aria-invalid="true"
+                      aria-describedby="email-error-{{ ai_gen_id }}"
+                    {% endif %}
+                  >
+                  {%- if form.errors contains 'email' -%}
+                    <div id="email-error-{{ ai_gen_id }}" class="ai-wholesale-error-{{ ai_gen_id }} active">
+                      {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
+                    </div>
+                  {%- endif -%}
+                </div>
+
+                <div class="ai-wholesale-field-{{ ai_gen_id }}">
+                  <label class="ai-wholesale-label-{{ ai_gen_id }}" for="phone-{{ ai_gen_id }}">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone-{{ ai_gen_id }}"
+                    name="contact[phone]"
+                    class="ai-wholesale-input-{{ ai_gen_id }}"
+                    placeholder="Your phone number"
+                  >
+                </div>
+
+                <div class="ai-wholesale-field-{{ ai_gen_id }}">
+                  <label class="ai-wholesale-label-{{ ai_gen_id }}" for="business-type-{{ ai_gen_id }}">
+                    Business Type<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+                  </label>
+                  <select
+                    id="business-type-{{ ai_gen_id }}"
+                    name="contact[Business Type]"
+                    class="ai-wholesale-select-{{ ai_gen_id }}"
+                    required
+                  >
+                    <option value="">Select your business type</option>
+                    {%- for block in section.blocks -%}
+                      {%- if block.type == 'business_type' -%}
+                        <option value="{{ block.settings.label }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</option>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </select>
+                </div>
+
+                <div class="ai-wholesale-field-{{ ai_gen_id }}">
+                  <label class="ai-wholesale-label-{{ ai_gen_id }}" for="location-{{ ai_gen_id }}">
+                    Location / Postcode<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+                  </label>
+                  <div class="ai-wholesale-location-wrapper-{{ ai_gen_id }}">
+                    <svg class="ai-wholesale-location-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                      <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    <input
+                      type="text"
+                      id="location-{{ ai_gen_id }}"
+                      name="contact[Location / Postcode]"
+                      class="ai-wholesale-input-{{ ai_gen_id }}"
+                      placeholder="Town or postcode"
+                      required
+                    >
                   </div>
-                {%- endif -%}
+                </div>
               </div>
 
-              <div class="ai-wholesale-field-{{ ai_gen_id }}">
-                <label class="ai-wholesale-label-{{ ai_gen_id }}" for="phone-{{ ai_gen_id }}">
-                  Phone Number
+              <div class="ai-wholesale-field-full-{{ ai_gen_id }}">
+                <label class="ai-wholesale-label-{{ ai_gen_id }}">
+                  Products Interested In
                 </label>
-                <input
-                  type="tel"
-                  id="phone-{{ ai_gen_id }}"
-                  name="contact[phone]"
-                  class="ai-wholesale-input-{{ ai_gen_id }}"
-                  placeholder="Your phone number"
-                >
+                <div class="ai-wholesale-checkbox-group-{{ ai_gen_id }}">
+                  {%- for block in section.blocks -%}
+                    {%- if block.type == 'product' -%}
+                      <div class="ai-wholesale-checkbox-item-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+                        <input
+                          type="checkbox"
+                          id="product-{{ ai_gen_id }}-{{ forloop.index }}"
+                          data-product-checkbox="{{ ai_gen_id }}"
+                          value="{{ block.settings.label }}"
+                          class="ai-wholesale-checkbox-{{ ai_gen_id }}"
+                        >
+                        <label for="product-{{ ai_gen_id }}-{{ forloop.index }}" class="ai-wholesale-checkbox-label-{{ ai_gen_id }}">{{ block.settings.label }}</label>
+                      </div>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
               </div>
 
-              <div class="ai-wholesale-field-{{ ai_gen_id }}">
-                <label class="ai-wholesale-label-{{ ai_gen_id }}" for="business-type-{{ ai_gen_id }}">
-                  Business Type<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+              <div class="ai-wholesale-field-full-{{ ai_gen_id }}">
+                <label class="ai-wholesale-label-{{ ai_gen_id }}" for="quantity-{{ ai_gen_id }}">
+                  Estimated Weekly Quantity
                 </label>
                 <select
-                  id="business-type-{{ ai_gen_id }}"
-                  name="contact[business_type]"
+                  id="quantity-{{ ai_gen_id }}"
+                  name="contact[Estimated Weekly Quantity]"
                   class="ai-wholesale-select-{{ ai_gen_id }}"
-                  required
                 >
-                  <option value="">Select your business type</option>
+                  <option value="">Select estimated quantity</option>
                   {%- for block in section.blocks -%}
-                    {%- if block.type == 'business_type' -%}
-                      <option  value="{{ block.settings.label }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</option>
+                    {%- if block.type == 'quantity' -%}
+                      <option value="{{ block.settings.label }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</option>
                     {%- endif -%}
                   {%- endfor -%}
                 </select>
               </div>
 
-              <div class="ai-wholesale-field-{{ ai_gen_id }}">
-                <label class="ai-wholesale-label-{{ ai_gen_id }}" for="location-{{ ai_gen_id }}">
-                  Location / Postcode<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+              <div class="ai-wholesale-field-full-{{ ai_gen_id }}">
+                <label class="ai-wholesale-label-{{ ai_gen_id }}" for="message-{{ ai_gen_id }}">
+                  Additional Information
                 </label>
-                <div class="ai-wholesale-location-wrapper-{{ ai_gen_id }}">
-                  <svg class="ai-wholesale-location-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                    <circle cx="12" cy="10" r="3"></circle>
-                  </svg>
-                  <input
-                    type="text"
-                    id="location-{{ ai_gen_id }}"
-                    name="contact[location]"
-                    class="ai-wholesale-input-{{ ai_gen_id }}"
-                    placeholder="Town or postcode"
-                    required
-                  >
-                </div>
+                <textarea
+                  id="message-{{ ai_gen_id }}"
+                  name="contact[body]"
+                  class="ai-wholesale-textarea-{{ ai_gen_id }}"
+                  placeholder="Tell us about your requirements, preferred delivery schedule, or anything else you'd like us to know."
+                ></textarea>
+              </div>
+
+              <div class="ai-wholesale-field-full-{{ ai_gen_id }}">
+                <button type="submit" class="ai-wholesale-submit-{{ ai_gen_id }}">
+                  {{ section.settings.button_text }}
+                </button>
               </div>
             </div>
-
-            <div class="ai-wholesale-field-full-{{ ai_gen_id }}">
-              <label class="ai-wholesale-label-{{ ai_gen_id }}">
-                Products Interested In<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
-              </label>
-              <div class="ai-wholesale-checkbox-group-{{ ai_gen_id }}">
-                {%- for block in section.blocks -%}
-                  {%- if block.type == 'product' -%}
-                    <div class="ai-wholesale-checkbox-item-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
-                      <input
-                        type="checkbox"
-                        id="product-{{ ai_gen_id }}-{{ forloop.index }}"
-                        name="contact[products][]"
-                        value="{{ block.settings.label }}"
-                        class="ai-wholesale-checkbox-{{ ai_gen_id }}"
-                      >
-                      <label for="product-{{ ai_gen_id }}-{{ forloop.index }}" class="ai-wholesale-checkbox-label-{{ ai_gen_id }}">{{ block.settings.label }}</label>
-                    </div>
-                  {%- endif -%}
-                {%- endfor -%}
-              </div>
-            </div>
-
-            <div class="ai-wholesale-field-full-{{ ai_gen_id }}">
-              <label class="ai-wholesale-label-{{ ai_gen_id }}" for="quantity-{{ ai_gen_id }}">
-                Estimated Weekly Quantity
-              </label>
-              <select
-                id="quantity-{{ ai_gen_id }}"
-                name="contact[weekly_quantity]"
-                class="ai-wholesale-select-{{ ai_gen_id }}"
-              >
-                <option value="">Select estimated quantity</option>
-                {%- for block in section.blocks -%}
-                  {%- if block.type == 'quantity' -%}
-                    <option value="{{ block.settings.label }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</option>
-                  {%- endif -%}
-                {%- endfor -%}
-              </select>
-            </div>
-
-            <div class="ai-wholesale-field-full-{{ ai_gen_id }}">
-              <label class="ai-wholesale-label-{{ ai_gen_id }}" for="message-{{ ai_gen_id }}">
-                Additional Information
-              </label>
-              <textarea
-                id="message-{{ ai_gen_id }}"
-                name="contact[body]"
-                class="ai-wholesale-textarea-{{ ai_gen_id }}"
-                placeholder="Tell us about your requirements, preferred delivery schedule, or anything else you'd like us to know."
-              ></textarea>
-            </div>
-
-            <div class="ai-wholesale-field-full-{{ ai_gen_id }}">
-              <button type="submit" class="ai-wholesale-submit-{{ ai_gen_id }}">
-                {{ section.settings.button_text }}
-              </button>
-            </div>
-          </div>
+          {%- endif -%}
         {%- endform -%}
-      </div>
-
-      <div class="ai-wholesale-success-{{ ai_gen_id }} {% if form.posted_successfully? %}active{% endif %}">
-        <div class="ai-wholesale-success-icon-{{ ai_gen_id }}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </div>
-        <h3 class="ai-wholesale-success-heading-{{ ai_gen_id }}">Thanks for getting in touch.</h3>
-        <p class="ai-wholesale-success-message-{{ ai_gen_id }}">We've received your trade enquiry. We'll review your requirements and get back to you within 1 business day.</p>
-        <p class="ai-wholesale-success-secondary-{{ ai_gen_id }}">We'll discuss product availability, delivery area, pricing and suitable ordering options.</p>
-        <a href="{{ section.settings.back_link }}" class="ai-wholesale-back-button-{{ ai_gen_id }}">Back to Wholesale</a>
       </div>
     </div>
   </div>
@@ -622,16 +632,29 @@
       }
 
       connectedCallback() {
-        this.formWrapper = this.querySelector('.ai-wholesale-form-wrapper-{{ ai_gen_id }}');
-        this.successPanel = this.querySelector('.ai-wholesale-success-{{ ai_gen_id }}');
+        this.form = this.querySelector('form');
+        this.hiddenProducts = this.querySelector('#hidden-products-{{ ai_gen_id }}');
+        this.productCheckboxes = this.querySelectorAll('[data-product-checkbox="{{ ai_gen_id }}"]');
 
-        if (this.successPanel && this.successPanel.classList.contains('active')) {
-          this.formWrapper.style.display = 'none';
+        if (this.form) {
+          this.form.addEventListener('submit', () => {
+            if (this.productCheckboxes && this.hiddenProducts) {
+              const selected = [];
+              this.productCheckboxes.forEach((cb) => {
+                if (cb.checked) {
+                  selected.push(cb.value);
+                }
+              });
+              this.hiddenProducts.value = selected.length > 0 ? selected.join(', ') : 'None selected';
+            }
+          });
         }
       }
     }
 
-    customElements.define('wholesale-enquiry-{{ ai_gen_id }}', WholesaleEnquiry{{ ai_gen_id }});
+    if (!customElements.get('wholesale-enquiry-{{ ai_gen_id }}')) {
+      customElements.define('wholesale-enquiry-{{ ai_gen_id }}', WholesaleEnquiry{{ ai_gen_id }});
+    }
   })();
 </script>
 
