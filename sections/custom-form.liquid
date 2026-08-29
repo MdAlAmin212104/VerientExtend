@@ -1,0 +1,954 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-wholesale-enquiry-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ section.settings.section_background }};
+    padding: {{ section.settings.section_padding_desktop }}px 20px;
+  }
+
+  .ai-wholesale-enquiry-container-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .ai-wholesale-left-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .ai-wholesale-eyebrow-{{ ai_gen_id }} {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: {{ section.settings.eyebrow_color }};
+    font-weight: 600;
+  }
+
+  .ai-wholesale-heading-{{ ai_gen_id }} {
+    font-size: {{ section.settings.heading_size }}px;
+    color: {{ section.settings.heading_color }};
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .ai-wholesale-intro-{{ ai_gen_id }} {
+    color: {{ section.settings.text_color }};
+    line-height: 1.6;
+  }
+
+  .ai-wholesale-image-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    border-radius: {{ section.settings.image_border_radius }}px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(47, 93, 80, 0.08);
+  }
+
+  .ai-wholesale-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-wholesale-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background-color: #E8DFD3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-wholesale-image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-wholesale-trust-points-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ai-wholesale-trust-item-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: {{ section.settings.text_color }};
+  }
+
+  .ai-wholesale-trust-icon-{{ ai_gen_id }} {
+    width: 18px;
+    height: 18px;
+    color: {{ section.settings.accent_color }};
+    flex-shrink: 0;
+  }
+
+  .ai-wholesale-right-{{ ai_gen_id }} {
+    background-color: {{ section.settings.form_background }};
+    border-radius: {{ section.settings.form_border_radius }}px;
+    padding: 40px;
+    box-shadow: 0 2px 12px rgba(47, 93, 80, 0.06);
+  }
+
+  .ai-wholesale-form-heading-{{ ai_gen_id }} {
+    font-size: {{ section.settings.form_heading_size }}px;
+    color: {{ section.settings.heading_color }};
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+  }
+
+  .ai-wholesale-form-intro-{{ ai_gen_id }} {
+    font-size: 18px;
+    color: {{ section.settings.text_color }};
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  .ai-wholesale-form-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .ai-wholesale-form-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .ai-wholesale-field-full-{{ ai_gen_id }} {
+    grid-column: 1 / -1;
+  }
+
+  .ai-wholesale-field-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ai-wholesale-label-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 600;
+    color: {{ section.settings.heading_color }};
+  }
+
+  .ai-wholesale-required-{{ ai_gen_id }} {
+    color: {{ section.settings.accent_color }};
+    margin-left: 2px;
+  }
+
+  .ai-wholesale-input-{{ ai_gen_id }},
+  .ai-wholesale-select-{{ ai_gen_id }},
+  .ai-wholesale-textarea-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 15px;
+    color: {{ section.settings.input_text_color }};
+    background-color: {{ section.settings.input_background }};
+    border: 1px solid {{ section.settings.input_border_color }};
+    border-radius: {{ section.settings.input_border_radius }}px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    font-family: inherit;
+    box-sizing: border-box;
+  }
+
+  .ai-wholesale-input-{{ ai_gen_id }}::placeholder,
+  .ai-wholesale-textarea-{{ ai_gen_id }}::placeholder {
+    color: {{ section.settings.placeholder_color }};
+  }
+
+  .ai-wholesale-input-{{ ai_gen_id }}:focus,
+  .ai-wholesale-select-{{ ai_gen_id }}:focus,
+  .ai-wholesale-textarea-{{ ai_gen_id }}:focus {
+    outline: none;
+    border-color: {{ section.settings.accent_color }};
+    box-shadow: 0 0 0 3px rgba(217, 164, 65, 0.1);
+  }
+
+  .ai-wholesale-textarea-{{ ai_gen_id }} {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .ai-wholesale-checkbox-group-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .ai-wholesale-checkbox-item-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ai-wholesale-checkbox-{{ ai_gen_id }} {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: {{ section.settings.accent_color }};
+    flex-shrink: 0;
+  }
+
+  .ai-wholesale-checkbox-label-{{ ai_gen_id }} {
+    font-size: 15px;
+    color: {{ section.settings.text_color }};
+    cursor: pointer;
+  }
+
+  .ai-wholesale-location-wrapper-{{ ai_gen_id }} {
+    position: relative;
+  }
+
+  .ai-wholesale-location-icon-{{ ai_gen_id }} {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: {{ section.settings.text_color }};
+    opacity: 0.6;
+  }
+
+  .ai-wholesale-location-wrapper-{{ ai_gen_id }} .ai-wholesale-input-{{ ai_gen_id }} {
+    padding-left: 42px;
+  }
+
+  .ai-wholesale-submit-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    color: {{ section.settings.button_text_color }};
+    background-color: {{ section.settings.button_background }};
+    border: none;
+    border-radius: {{ section.settings.button_border_radius }}px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+    margin-top: 8px;
+  }
+
+  .ai-wholesale-submit-{{ ai_gen_id }}:hover {
+    background-color: {{ section.settings.button_hover_background }};
+    transform: translateY(-1px);
+  }
+
+  .ai-wholesale-submit-{{ ai_gen_id }}:active {
+    transform: translateY(0);
+  }
+
+  .ai-wholesale-success-{{ ai_gen_id }} {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .ai-wholesale-success-{{ ai_gen_id }}.active {
+    display: block;
+  }
+
+  .ai-wholesale-success-icon-{{ ai_gen_id }} {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px;
+    background-color: {{ section.settings.accent_color }};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+
+  .ai-wholesale-success-icon-{{ ai_gen_id }} svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .ai-wholesale-success-heading-{{ ai_gen_id }} {
+    font-size: 24px;
+    color: {{ section.settings.heading_color }};
+    margin: 0 0 12px 0;
+  }
+
+  .ai-wholesale-success-message-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: {{ section.settings.text_color }};
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .ai-wholesale-success-secondary-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: {{ section.settings.text_color }};
+    opacity: 0.8;
+    margin-bottom: 24px;
+  }
+
+  .ai-wholesale-back-button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 12px 28px;
+    font-size: 15px;
+    font-weight: 600;
+    color: {{ section.settings.button_text_color }};
+    background-color: {{ section.settings.button_background }};
+    border-radius: {{ section.settings.button_border_radius }}px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .ai-wholesale-back-button-{{ ai_gen_id }}:hover {
+    background-color: {{ section.settings.button_hover_background }};
+  }
+
+  .ai-wholesale-error-{{ ai_gen_id }} {
+    color: #D82C0D;
+    font-size: 13px;
+    margin-top: 4px;
+    display: none;
+  }
+
+  .ai-wholesale-error-{{ ai_gen_id }}.active {
+    display: block;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-wholesale-enquiry-container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .ai-wholesale-right-{{ ai_gen_id }} {
+      padding: 32px 24px;
+    }
+
+    .ai-wholesale-checkbox-group-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-wholesale-enquiry-{{ ai_gen_id }} {
+      padding: {{ section.settings.section_padding_mobile }}px 16px;
+    }
+
+    .ai-wholesale-heading-{{ ai_gen_id }} {
+      font-size: {{ section.settings.heading_size | times: 0.7 }}px;
+    }
+
+    .ai-wholesale-form-heading-{{ ai_gen_id }} {
+      font-size: {{ section.settings.form_heading_size | times: 0.8 }}px;
+    }
+
+    .ai-wholesale-right-{{ ai_gen_id }} {
+      padding: 28px 20px;
+    }
+
+    .ai-wholesale-form-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+{% endstyle %}
+
+<wholesale-enquiry-{{ ai_gen_id }} class="ai-wholesale-enquiry-{{ ai_gen_id }}">
+  <div class="ai-wholesale-enquiry-container-{{ ai_gen_id }}">
+    <div class="ai-wholesale-left-{{ ai_gen_id }}">
+      {% if section.settings.eyebrow != blank %}
+        <div class="ai-wholesale-eyebrow-{{ ai_gen_id }}">{{ section.settings.eyebrow }}</div>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h2 class="ai-wholesale-heading-{{ ai_gen_id }}">{{ section.settings.heading }}</h2>
+      {% endif %}
+
+      {% if section.settings.intro_text != blank %}
+        <div class="ai-wholesale-intro-{{ ai_gen_id }}">{{ section.settings.intro_text }}</div>
+      {% endif %}
+
+      <div class="ai-wholesale-image-wrapper-{{ ai_gen_id }}">
+        {% if section.settings.image %}
+          <img
+            src="{{ section.settings.image | image_url: width: 800 }}"
+            alt="{{ section.settings.image.alt | escape }}"
+            loading="lazy"
+            width="{{ section.settings.image.width }}"
+            height="{{ section.settings.image.height }}"
+            class="ai-wholesale-image-{{ ai_gen_id }}"
+          >
+        {% else %}
+          <div class="ai-wholesale-image-placeholder-{{ ai_gen_id }}">
+            {{ 'product-1' | placeholder_svg_tag }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="ai-wholesale-trust-points-{{ ai_gen_id }}">
+        {% if section.settings.trust_point_1 != blank %}
+          <div class="ai-wholesale-trust-item-{{ ai_gen_id }}">
+            <svg class="ai-wholesale-trust-icon-{{ ai_gen_id }}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            <span>{{ section.settings.trust_point_1 }}</span>
+          </div>
+        {% endif %}
+
+        {% if section.settings.trust_point_2 != blank %}
+          <div class="ai-wholesale-trust-item-{{ ai_gen_id }}">
+            <svg class="ai-wholesale-trust-icon-{{ ai_gen_id }}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            <span>{{ section.settings.trust_point_2 }}</span>
+          </div>
+        {% endif %}
+
+        {% if section.settings.trust_point_3 != blank %}
+          <div class="ai-wholesale-trust-item-{{ ai_gen_id }}">
+            <svg class="ai-wholesale-trust-icon-{{ ai_gen_id }}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            <span>{{ section.settings.trust_point_3 }}</span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="ai-wholesale-right-{{ ai_gen_id }}">
+      <div class="ai-wholesale-form-wrapper-{{ ai_gen_id }}">
+        {% if section.settings.form_heading != blank %}
+          <h3 class="ai-wholesale-form-heading-{{ ai_gen_id }}">{{ section.settings.form_heading }}</h3>
+        {% endif %}
+
+        {% if section.settings.form_intro != blank %}
+          <p class="ai-wholesale-form-intro-{{ ai_gen_id }}">{{ section.settings.form_intro }}</p>
+        {% endif %}
+
+        {%- form 'contact' -%}
+          <input type="hidden" name="contact[form_type]" value="wholesale_enquiry">
+
+          <div class="ai-wholesale-form-{{ ai_gen_id }}">
+            <div class="ai-wholesale-form-grid-{{ ai_gen_id }}">
+              <div class="ai-wholesale-field-{{ ai_gen_id }}">
+                <label class="ai-wholesale-label-{{ ai_gen_id }}" for="business-name-{{ ai_gen_id }}">
+                  Business Name<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="business-name-{{ ai_gen_id }}"
+                  name="contact[business_name]"
+                  class="ai-wholesale-input-{{ ai_gen_id }}"
+                  placeholder="Your business name"
+                  required
+                >
+              </div>
+
+              <div class="ai-wholesale-field-{{ ai_gen_id }}">
+                <label class="ai-wholesale-label-{{ ai_gen_id }}" for="contact-name-{{ ai_gen_id }}">
+                  Contact Name<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="contact-name-{{ ai_gen_id }}"
+                  name="contact[name]"
+                  class="ai-wholesale-input-{{ ai_gen_id }}"
+                  placeholder="Your name"
+                  required
+                >
+              </div>
+
+              <div class="ai-wholesale-field-{{ ai_gen_id }}">
+                <label class="ai-wholesale-label-{{ ai_gen_id }}" for="email-{{ ai_gen_id }}">
+                  Email Address<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+                </label>
+                <input
+                  type="email"
+                  id="email-{{ ai_gen_id }}"
+                  name="contact[email]"
+                  class="ai-wholesale-input-{{ ai_gen_id }}"
+                  placeholder="you@business.com"
+                  required
+                  {% if form.errors %}
+                    aria-invalid="true"
+                    aria-describedby="email-error-{{ ai_gen_id }}"
+                  {% endif %}
+                >
+                {%- if form.errors -%}
+                  <div id="email-error-{{ ai_gen_id }}" class="ai-wholesale-error-{{ ai_gen_id }} active">
+                    {{ form.errors.messages.email }}
+                  </div>
+                {%- endif -%}
+              </div>
+
+              <div class="ai-wholesale-field-{{ ai_gen_id }}">
+                <label class="ai-wholesale-label-{{ ai_gen_id }}" for="phone-{{ ai_gen_id }}">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  id="phone-{{ ai_gen_id }}"
+                  name="contact[phone]"
+                  class="ai-wholesale-input-{{ ai_gen_id }}"
+                  placeholder="Your phone number"
+                >
+              </div>
+
+              <div class="ai-wholesale-field-{{ ai_gen_id }}">
+                <label class="ai-wholesale-label-{{ ai_gen_id }}" for="business-type-{{ ai_gen_id }}">
+                  Business Type<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+                </label>
+                <select
+                  id="business-type-{{ ai_gen_id }}"
+                  name="contact[business_type]"
+                  class="ai-wholesale-select-{{ ai_gen_id }}"
+                  required
+                >
+                  <option value="">Select your business type</option>
+                  {%- for block in section.blocks -%}
+                    {%- if block.type == 'business_type' -%}
+                      <option value="{{ block.settings.label }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</option>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </select>
+              </div>
+
+              <div class="ai-wholesale-field-{{ ai_gen_id }}">
+                <label class="ai-wholesale-label-{{ ai_gen_id }}" for="location-{{ ai_gen_id }}">
+                  Location / Postcode<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+                </label>
+                <div class="ai-wholesale-location-wrapper-{{ ai_gen_id }}">
+                  <svg class="ai-wholesale-location-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <input
+                    type="text"
+                    id="location-{{ ai_gen_id }}"
+                    name="contact[location]"
+                    class="ai-wholesale-input-{{ ai_gen_id }}"
+                    placeholder="Town or postcode"
+                    required
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="ai-wholesale-field-full-{{ ai_gen_id }}">
+              <label class="ai-wholesale-label-{{ ai_gen_id }}">
+                Products Interested In<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+              </label>
+              <div class="ai-wholesale-checkbox-group-{{ ai_gen_id }}">
+                {%- for block in section.blocks -%}
+                  {%- if block.type == 'product' -%}
+                    <div class="ai-wholesale-checkbox-item-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+                      <input
+                        type="checkbox"
+                        id="product-{{ ai_gen_id }}-{{ forloop.index }}"
+                        name="contact[products][]"
+                        value="{{ block.settings.label }}"
+                        class="ai-wholesale-checkbox-{{ ai_gen_id }}"
+                      >
+                      <label for="product-{{ ai_gen_id }}-{{ forloop.index }}" class="ai-wholesale-checkbox-label-{{ ai_gen_id }}">{{ block.settings.label }}</label>
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            </div>
+
+            <div class="ai-wholesale-field-full-{{ ai_gen_id }}">
+              <label class="ai-wholesale-label-{{ ai_gen_id }}" for="quantity-{{ ai_gen_id }}">
+                Estimated Weekly Quantity
+              </label>
+              <select
+                id="quantity-{{ ai_gen_id }}"
+                name="contact[weekly_quantity]"
+                class="ai-wholesale-select-{{ ai_gen_id }}"
+              >
+                <option value="">Select estimated quantity</option>
+                {%- for block in section.blocks -%}
+                  {%- if block.type == 'quantity' -%}
+                    <option value="{{ block.settings.label }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</option>
+                  {%- endif -%}
+                {%- endfor -%}
+              </select>
+            </div>
+
+            <div class="ai-wholesale-field-full-{{ ai_gen_id }}">
+              <label class="ai-wholesale-label-{{ ai_gen_id }}" for="message-{{ ai_gen_id }}">
+                Additional Information
+              </label>
+              <textarea
+                id="message-{{ ai_gen_id }}"
+                name="contact[body]"
+                class="ai-wholesale-textarea-{{ ai_gen_id }}"
+                placeholder="Tell us about your requirements, preferred delivery schedule, or anything else you'd like us to know."
+              ></textarea>
+            </div>
+
+            <div class="ai-wholesale-field-full-{{ ai_gen_id }}">
+              <button type="submit" class="ai-wholesale-submit-{{ ai_gen_id }}">
+                {{ section.settings.button_text }}
+              </button>
+            </div>
+          </div>
+        {%- endform -%}
+      </div>
+
+      <div class="ai-wholesale-success-{{ ai_gen_id }} {% if form.posted_successfully? %}active{% endif %}">
+        <div class="ai-wholesale-success-icon-{{ ai_gen_id }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h3 class="ai-wholesale-success-heading-{{ ai_gen_id }}">Thanks for getting in touch.</h3>
+        <p class="ai-wholesale-success-message-{{ ai_gen_id }}">We've received your trade enquiry. We'll review your requirements and get back to you within 1 business day.</p>
+        <p class="ai-wholesale-success-secondary-{{ ai_gen_id }}">We'll discuss product availability, delivery area, pricing and suitable ordering options.</p>
+        <a href="{{ section.settings.back_link }}" class="ai-wholesale-back-button-{{ ai_gen_id }}">Back to Wholesale</a>
+      </div>
+    </div>
+  </div>
+</wholesale-enquiry-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class WholesaleEnquiry{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.formWrapper = this.querySelector('.ai-wholesale-form-wrapper-{{ ai_gen_id }}');
+        this.successPanel = this.querySelector('.ai-wholesale-success-{{ ai_gen_id }}');
+
+        if (this.successPanel && this.successPanel.classList.contains('active')) {
+          this.formWrapper.style.display = 'none';
+        }
+      }
+    }
+
+    customElements.define('wholesale-enquiry-{{ ai_gen_id }}', WholesaleEnquiry{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "B2B wholesale enquiry",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section layout"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_desktop",
+      "label": "Desktop padding",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_mobile",
+      "label": "Mobile padding",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Left column content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "TRADE ENQUIRY"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Let's Talk Wholesale"
+    },
+    {
+      "type": "textarea",
+      "id": "intro_text",
+      "label": "Introduction text",
+      "default": "Looking for a reliable local mushroom supplier? Tell us a little about your business and what you're looking for. We'll get back to you to discuss availability, delivery and ordering options."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "trust_point_1",
+      "label": "Trust point 1",
+      "default": "Local cultivation"
+    },
+    {
+      "type": "text",
+      "id": "trust_point_2",
+      "label": "Trust point 2",
+      "default": "Fresh seasonal supply"
+    },
+    {
+      "type": "text",
+      "id": "trust_point_3",
+      "label": "Trust point 3",
+      "default": "Responsive support"
+    },
+    {
+      "type": "header",
+      "content": "Form content"
+    },
+    {
+      "type": "text",
+      "id": "form_heading",
+      "label": "Form heading",
+      "default": "Request a Trade Conversation"
+    },
+    {
+      "type": "text",
+      "id": "form_intro",
+      "label": "Form introduction",
+      "default": "Complete the form below and we'll be in touch to discuss your requirements."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Submit button text",
+      "default": "Request a Trade Conversation"
+    },
+    {
+      "type": "url",
+      "id": "back_link",
+      "label": "Success back link"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "section_background",
+      "label": "Section background",
+      "default": "#F3EDE2"
+    },
+    {
+      "type": "color",
+      "id": "form_background",
+      "label": "Form background",
+      "default": "#FAFAFA"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#2F5D50"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#4A4A4A"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow color",
+      "default": "#8B6F47"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#D9A441"
+    },
+    {
+      "type": "color",
+      "id": "input_background",
+      "label": "Input background",
+      "default": "#FAFAFA"
+    },
+    {
+      "type": "color",
+      "id": "input_text_color",
+      "label": "Input text",
+      "default": "#2F5D50"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Input border",
+      "default": "#2F5D50"
+    },
+    {
+      "type": "color",
+      "id": "placeholder_color",
+      "label": "Placeholder text",
+      "default": "#9CA3AF"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#D9A441"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Button hover background",
+      "default": "#C89335"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#FAFAFA"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Main heading size",
+      "min": 24,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 42
+    },
+    {
+      "type": "range",
+      "id": "form_heading_size",
+      "label": "Form heading size",
+      "min": 18,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "header",
+      "content": "Border radius"
+    },
+    {
+      "type": "range",
+      "id": "form_border_radius",
+      "label": "Form card",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "label": "Input fields",
+      "min": 0,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Button",
+      "min": 0,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    }
+  ],
+  "blocks": [
+    {
+      "type": "business_type",
+      "name": "Business Type Option",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Option label",
+          "default": "Restaurant"
+        }
+      ]
+    },
+    {
+      "type": "product",
+      "name": "Product Option",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Option label",
+          "default": "Oyster Mushrooms"
+        }
+      ]
+    },
+    {
+      "type": "quantity",
+      "name": "Quantity Option",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Option label",
+          "default": "1–5 kg"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 30,
+  "presets": [
+    {
+      "name": "B2B wholesale enquiry",
+      "blocks": [
+        { "type": "business_type", "settings": { "label": "Restaurant" } },
+        { "type": "business_type", "settings": { "label": "Café" } },
+        { "type": "business_type", "settings": { "label": "Hotel" } },
+        { "type": "business_type", "settings": { "label": "Retail Store" } },
+        { "type": "business_type", "settings": { "label": "Farm Shop" } },
+        { "type": "business_type", "settings": { "label": "Catering Business" } },
+        { "type": "business_type", "settings": { "label": "Other" } },
+        { "type": "product", "settings": { "label": "Oyster Mushrooms" } },
+        { "type": "product", "settings": { "label": "Shiitake" } },
+        { "type": "product", "settings": { "label": "Lion's Mane" } },
+        { "type": "product", "settings": { "label": "Seasonal Varieties" } },
+        { "type": "product", "settings": { "label": "Other / Not Sure" } },
+        { "type": "quantity", "settings": { "label": "Under 1 kg" } },
+        { "type": "quantity", "settings": { "label": "1–5 kg" } },
+        { "type": "quantity", "settings": { "label": "5–10 kg" } },
+        { "type": "quantity", "settings": { "label": "10–25 kg" } },
+        { "type": "quantity", "settings": { "label": "25 kg+" } },
+        { "type": "quantity", "settings": { "label": "Not sure yet" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
