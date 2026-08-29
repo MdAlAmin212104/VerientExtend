@@ -635,7 +635,6 @@
       const form = sectionEl.querySelector('form');
       const hiddenProducts = sectionEl.querySelector('#hidden-products-{{ ai_gen_id }}');
       const checkboxes = sectionEl.querySelectorAll('[data-product-checkbox="{{ ai_gen_id }}"]');
-      const messageTextarea = sectionEl.querySelector('#message-{{ ai_gen_id }}');
 
       function getSelectedProducts() {
         const selected = [];
@@ -660,17 +659,6 @@
       if (form) {
         form.addEventListener('submit', function() {
           updateHiddenProducts();
-
-          if (messageTextarea) {
-            const selected = getSelectedProducts();
-            const productsText = selected.length > 0 ? selected.join(', ') : 'None selected';
-            const originalMessage = messageTextarea.value.trim();
-
-            const summary = '[Products Interested In]: ' + productsText;
-            if (originalMessage.indexOf('[Products Interested In]:') === -1) {
-              messageTextarea.value = summary + (originalMessage ? '\n\nAdditional Notes:\n' + originalMessage : '');
-            }
-          }
         });
       }
 
