@@ -438,10 +438,20 @@
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
               </div>
-              <h3 class="ai-wholesale-success-heading-{{ ai_gen_id }}">Thanks for getting in touch.</h3>
-              <p class="ai-wholesale-success-message-{{ ai_gen_id }}">We've received your trade enquiry. We'll review your requirements and get back to you within 1 business day.</p>
-              <p class="ai-wholesale-success-secondary-{{ ai_gen_id }}">We'll discuss product availability, delivery area, pricing and suitable ordering options.</p>
-              <a href="{{ section.settings.back_link | default: '/' }}" class="ai-wholesale-back-button-{{ ai_gen_id }}">Back to Wholesale</a>
+              {% if section.settings.success_heading != blank %}
+                <h3 class="ai-wholesale-success-heading-{{ ai_gen_id }}">{{ section.settings.success_heading }}</h3>
+              {% endif %}
+              {% if section.settings.success_message != blank %}
+                <p class="ai-wholesale-success-message-{{ ai_gen_id }}">{{ section.settings.success_message }}</p>
+              {% endif %}
+              {% if section.settings.success_secondary != blank %}
+                <p class="ai-wholesale-success-secondary-{{ ai_gen_id }}">{{ section.settings.success_secondary }}</p>
+              {% endif %}
+              {% if section.settings.success_button_text != blank %}
+                <a href="{{ section.settings.back_link | default: '/' }}" class="ai-wholesale-back-button-{{ ai_gen_id }}">
+                  {{ section.settings.success_button_text }}
+                </a>
+              {% endif %}
             </div>
           {%- else -%}
             <input type="hidden" name="contact[Enquiry Type]" value="B2B Wholesale Enquiry">
@@ -457,42 +467,42 @@
               <div class="ai-wholesale-form-grid-{{ ai_gen_id }}">
                 <div class="ai-wholesale-field-{{ ai_gen_id }}">
                   <label class="ai-wholesale-label-{{ ai_gen_id }}" for="business-name-{{ ai_gen_id }}">
-                    Business Name<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+                    {{ section.settings.label_business_name | default: 'Business Name' }}<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
                   </label>
                   <input
                     type="text"
                     id="business-name-{{ ai_gen_id }}"
                     name="contact[Business Name]"
                     class="ai-wholesale-input-{{ ai_gen_id }}"
-                    placeholder="Your business name"
+                    placeholder="{{ section.settings.placeholder_business_name | default: 'Your business name' | escape }}"
                     required
                   >
                 </div>
 
                 <div class="ai-wholesale-field-{{ ai_gen_id }}">
                   <label class="ai-wholesale-label-{{ ai_gen_id }}" for="contact-name-{{ ai_gen_id }}">
-                    Contact Name<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+                    {{ section.settings.label_contact_name | default: 'Contact Name' }}<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
                   </label>
                   <input
                     type="text"
                     id="contact-name-{{ ai_gen_id }}"
                     name="contact[name]"
                     class="ai-wholesale-input-{{ ai_gen_id }}"
-                    placeholder="Your name"
+                    placeholder="{{ section.settings.placeholder_contact_name | default: 'Your name' | escape }}"
                     required
                   >
                 </div>
 
                 <div class="ai-wholesale-field-{{ ai_gen_id }}">
                   <label class="ai-wholesale-label-{{ ai_gen_id }}" for="email-{{ ai_gen_id }}">
-                    Email Address<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+                    {{ section.settings.label_email | default: 'Email Address' }}<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
                   </label>
                   <input
                     type="email"
                     id="email-{{ ai_gen_id }}"
                     name="contact[email]"
                     class="ai-wholesale-input-{{ ai_gen_id }}"
-                    placeholder="you@business.com"
+                    placeholder="{{ section.settings.placeholder_email | default: 'you@business.com' | escape }}"
                     required
                     {% if form.errors contains 'email' %}
                       aria-invalid="true"
@@ -508,20 +518,20 @@
 
                 <div class="ai-wholesale-field-{{ ai_gen_id }}">
                   <label class="ai-wholesale-label-{{ ai_gen_id }}" for="phone-{{ ai_gen_id }}">
-                    Phone Number
+                    {{ section.settings.label_phone | default: 'Phone Number' }}
                   </label>
                   <input
                     type="tel"
                     id="phone-{{ ai_gen_id }}"
                     name="contact[phone]"
                     class="ai-wholesale-input-{{ ai_gen_id }}"
-                    placeholder="Your phone number"
+                    placeholder="{{ section.settings.placeholder_phone | default: 'Your phone number' | escape }}"
                   >
                 </div>
 
                 <div class="ai-wholesale-field-{{ ai_gen_id }}">
                   <label class="ai-wholesale-label-{{ ai_gen_id }}" for="business-type-{{ ai_gen_id }}">
-                    Business Type<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+                    {{ section.settings.label_business_type | default: 'Business Type' }}<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
                   </label>
                   <select
                     id="business-type-{{ ai_gen_id }}"
@@ -529,10 +539,10 @@
                     class="ai-wholesale-select-{{ ai_gen_id }}"
                     required
                   >
-                    <option value="">Select your business type</option>
+                    <option value="">{{ section.settings.placeholder_business_type | default: 'Select your business type' }}</option>
                     {%- for block in section.blocks -%}
                       {%- if block.type == 'business_type' -%}
-                        <option value="{{ block.settings.label }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</option>
+                        <option value="{{ block.settings.label | escape }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</option>
                       {%- endif -%}
                     {%- endfor -%}
                   </select>
@@ -540,7 +550,7 @@
 
                 <div class="ai-wholesale-field-{{ ai_gen_id }}">
                   <label class="ai-wholesale-label-{{ ai_gen_id }}" for="location-{{ ai_gen_id }}">
-                    Location / Postcode<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
+                    {{ section.settings.label_location | default: 'Location / Postcode' }}<span class="ai-wholesale-required-{{ ai_gen_id }}">*</span>
                   </label>
                   <div class="ai-wholesale-location-wrapper-{{ ai_gen_id }}">
                     <svg class="ai-wholesale-location-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -552,7 +562,7 @@
                       id="location-{{ ai_gen_id }}"
                       name="contact[Location / Postcode]"
                       class="ai-wholesale-input-{{ ai_gen_id }}"
-                      placeholder="Town or postcode"
+                      placeholder="{{ section.settings.placeholder_location | default: 'Town or postcode' | escape }}"
                       required
                     >
                   </div>
@@ -561,7 +571,7 @@
 
               <div class="ai-wholesale-field-full-{{ ai_gen_id }}">
                 <label class="ai-wholesale-label-{{ ai_gen_id }}">
-                  Products Interested In
+                  {{ section.settings.label_products | default: 'Products Interested In' }}
                 </label>
                 <div class="ai-wholesale-checkbox-group-{{ ai_gen_id }}">
                   {%- for block in section.blocks -%}
@@ -584,17 +594,17 @@
 
               <div class="ai-wholesale-field-full-{{ ai_gen_id }}">
                 <label class="ai-wholesale-label-{{ ai_gen_id }}" for="quantity-{{ ai_gen_id }}">
-                  Estimated Weekly Quantity
+                  {{ section.settings.label_quantity | default: 'Estimated Weekly Quantity' }}
                 </label>
                 <select
                   id="quantity-{{ ai_gen_id }}"
                   name="contact[Estimated Weekly Quantity]"
                   class="ai-wholesale-select-{{ ai_gen_id }}"
                 >
-                  <option value="">Select estimated quantity</option>
+                  <option value="">{{ section.settings.placeholder_quantity | default: 'Select estimated quantity' }}</option>
                   {%- for block in section.blocks -%}
                     {%- if block.type == 'quantity' -%}
-                      <option value="{{ block.settings.label }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</option>
+                      <option value="{{ block.settings.label | escape }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</option>
                     {%- endif -%}
                   {%- endfor -%}
                 </select>
@@ -602,13 +612,13 @@
 
               <div class="ai-wholesale-field-full-{{ ai_gen_id }}">
                 <label class="ai-wholesale-label-{{ ai_gen_id }}" for="message-{{ ai_gen_id }}">
-                  Additional Information
+                  {{ section.settings.label_message | default: 'Additional Information' }}
                 </label>
                 <textarea
                   id="message-{{ ai_gen_id }}"
                   name="contact[body]"
                   class="ai-wholesale-textarea-{{ ai_gen_id }}"
-                  placeholder="Tell us about your requirements, preferred delivery schedule, or anything else you'd like us to know."
+                  placeholder="{{ section.settings.placeholder_message | default: 'Tell us about your requirements, preferred delivery schedule, or anything else you\'d like us to know.' | escape }}"
                 ></textarea>
               </div>
 
@@ -753,7 +763,7 @@
     },
     {
       "type": "header",
-      "content": "Form content"
+      "content": "Form header & button"
     },
     {
       "type": "text",
@@ -774,9 +784,143 @@
       "default": "Request a Trade Conversation"
     },
     {
+      "type": "header",
+      "content": "Success message"
+    },
+    {
+      "type": "text",
+      "id": "success_heading",
+      "label": "Success heading",
+      "default": "Thanks for getting in touch."
+    },
+    {
+      "type": "textarea",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "We've received your trade enquiry. We'll review your requirements and get back to you within 1 business day."
+    },
+    {
+      "type": "textarea",
+      "id": "success_secondary",
+      "label": "Success secondary message",
+      "default": "We'll discuss product availability, delivery area, pricing and suitable ordering options."
+    },
+    {
+      "type": "text",
+      "id": "success_button_text",
+      "label": "Success button text",
+      "default": "Back to Wholesale"
+    },
+    {
       "type": "url",
       "id": "back_link",
       "label": "Success back link"
+    },
+    {
+      "type": "header",
+      "content": "Field labels & placeholders"
+    },
+    {
+      "type": "text",
+      "id": "label_business_name",
+      "label": "Business name label",
+      "default": "Business Name"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_business_name",
+      "label": "Business name placeholder",
+      "default": "Your business name"
+    },
+    {
+      "type": "text",
+      "id": "label_contact_name",
+      "label": "Contact name label",
+      "default": "Contact Name"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_contact_name",
+      "label": "Contact name placeholder",
+      "default": "Your name"
+    },
+    {
+      "type": "text",
+      "id": "label_email",
+      "label": "Email label",
+      "default": "Email Address"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_email",
+      "label": "Email placeholder",
+      "default": "you@business.com"
+    },
+    {
+      "type": "text",
+      "id": "label_phone",
+      "label": "Phone label",
+      "default": "Phone Number"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_phone",
+      "label": "Phone placeholder",
+      "default": "Your phone number"
+    },
+    {
+      "type": "text",
+      "id": "label_business_type",
+      "label": "Business type label",
+      "default": "Business Type"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_business_type",
+      "label": "Business type placeholder option",
+      "default": "Select your business type"
+    },
+    {
+      "type": "text",
+      "id": "label_location",
+      "label": "Location label",
+      "default": "Location / Postcode"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_location",
+      "label": "Location placeholder",
+      "default": "Town or postcode"
+    },
+    {
+      "type": "text",
+      "id": "label_products",
+      "label": "Products label",
+      "default": "Products Interested In"
+    },
+    {
+      "type": "text",
+      "id": "label_quantity",
+      "label": "Quantity label",
+      "default": "Estimated Weekly Quantity"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_quantity",
+      "label": "Quantity placeholder option",
+      "default": "Select estimated quantity"
+    },
+    {
+      "type": "text",
+      "id": "label_message",
+      "label": "Message label",
+      "default": "Additional Information"
+    },
+    {
+      "type": "textarea",
+      "id": "placeholder_message",
+      "label": "Message placeholder",
+      "default": "Tell us about your requirements, preferred delivery schedule, or anything else you'd like us to know."
     },
     {
       "type": "header",
