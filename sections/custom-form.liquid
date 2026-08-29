@@ -570,9 +570,8 @@
                         <input
                           type="checkbox"
                           id="product-{{ ai_gen_id }}-{{ forloop.index }}"
-                          name="contact[Product: {{ block.settings.label | escape }}]"
                           data-product-checkbox="{{ ai_gen_id }}"
-                          value="Yes"
+                          value="{{ block.settings.label | escape }}"
                           data-product-name="{{ block.settings.label | escape }}"
                           class="ai-wholesale-checkbox-{{ ai_gen_id }}"
                         >
