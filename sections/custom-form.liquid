@@ -570,8 +570,10 @@
                         <input
                           type="checkbox"
                           id="product-{{ ai_gen_id }}-{{ forloop.index }}"
+                          name="contact[Product: {{ block.settings.label | escape }}]"
                           data-product-checkbox="{{ ai_gen_id }}"
-                          value="{{ block.settings.label }}"
+                          value="Yes"
+                          data-product-name="{{ block.settings.label | escape }}"
                           class="ai-wholesale-checkbox-{{ ai_gen_id }}"
                         >
                         <label for="product-{{ ai_gen_id }}-{{ forloop.index }}" class="ai-wholesale-checkbox-label-{{ ai_gen_id }}">{{ block.settings.label }}</label>
@@ -626,22 +628,66 @@
 
 <script>
   (function() {
-    class WholesaleEnquiry{{ ai_gen_id }} extends HTMLElement {
-      constructor() {
-        super();
+    function setupWholesaleForm_{{ ai_gen_id | replace: '-', '_' }}() {
+      const sectionEl = document.getElementById('shopify-section-{{ section.id }}') || document.querySelector('.ai-wholesale-enquiry-{{ ai_gen_id }}');
+      if (!sectionEl) return;
+
+      const form = sectionEl.querySelector('form');
+      const hiddenProducts = sectionEl.querySelector('#hidden-products-{{ ai_gen_id }}');
+      const checkboxes = sectionEl.querySelectorAll('[data-product-checkbox="{{ ai_gen_id }}"]');
+      const messageTextarea = sectionEl.querySelector('#message-{{ ai_gen_id }}');
+
+      function getSelectedProducts() {
+        const selected = [];
+        checkboxes.forEach(function(cb) {
+          if (cb.checked) {
+            selected.push(cb.getAttribute('data-product-name') || cb.value);
+          }
+        });
+        return selected;
       }
 
-      connectedCallback() {
-        this.formWrapper = this.querySelector('.ai-wholesale-form-wrapper-{{ ai_gen_id }}');
-        this.successPanel = this.querySelector('.ai-wholesale-success-{{ ai_gen_id }}');
-
-        if (this.successPanel && this.successPanel.classList.contains('active')) {
-          this.formWrapper.style.display = 'none';
-        }
+      function updateHiddenProducts() {
+        if (!hiddenProducts) return;
+        const selected = getSelectedProducts();
+        hiddenProducts.value = selected.length > 0 ? selected.join(', ') : 'None selected';
       }
+
+      checkboxes.forEach(function(cb) {
+        cb.addEventListener('change', updateHiddenProducts);
+      });
+
+      if (form) {
+        form.addEventListener('submit', function() {
+          updateHiddenProducts();
+
+          if (messageTextarea) {
+            const selected = getSelectedProducts();
+            const productsText = selected.length > 0 ? selected.join(', ') : 'None selected';
+            const originalMessage = messageTextarea.value.trim();
+
+            const summary = '[Products Interested In]: ' + productsText;
+            if (originalMessage.indexOf('[Products Interested In]:') === -1) {
+              messageTextarea.value = summary + (originalMessage ? '\n\nAdditional Notes:\n' + originalMessage : '');
+            }
+          }
+        });
+      }
+
+      updateHiddenProducts();
     }
 
-    customElements.define('wholesale-enquiry-{{ ai_gen_id }}', WholesaleEnquiry{{ ai_gen_id }});
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupWholesaleForm_{{ ai_gen_id | replace: '-', '_' }});
+    } else {
+      setupWholesaleForm_{{ ai_gen_id | replace: '-', '_' }}();
+    }
+
+    document.addEventListener('shopify:section:load', function(e) {
+      if (e.detail && e.detail.sectionId === '{{ section.id }}') {
+        setupWholesaleForm_{{ ai_gen_id | replace: '-', '_' }}();
+      }
+    });
   })();
 </script>
 
