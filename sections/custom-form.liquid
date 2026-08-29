@@ -626,50 +626,22 @@
 
 <script>
   (function() {
-    function initWholesaleProducts_{{ ai_gen_id | replace: '-', '_' }}() {
-      const sectionEl = document.getElementById('shopify-section-{{ section.id }}') || document.querySelector('.ai-wholesale-enquiry-{{ ai_gen_id }}');
-      if (!sectionEl) return;
-
-      const form = sectionEl.querySelector('form');
-      const hiddenInput = sectionEl.querySelector('#hidden-products-{{ ai_gen_id }}');
-      const checkboxes = sectionEl.querySelectorAll('[data-product-checkbox="{{ ai_gen_id }}"]');
-
-      function updateProducts() {
-        if (!hiddenInput || !checkboxes) return;
-        const selected = [];
-        checkboxes.forEach(function(cb) {
-          if (cb.checked) {
-            selected.push(cb.value);
-          }
-        });
-        hiddenInput.value = selected.length > 0 ? selected.join(', ') : 'None selected';
+    class WholesaleEnquiry{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
       }
 
-      checkboxes.forEach(function(cb) {
-        cb.addEventListener('change', updateProducts);
-        cb.addEventListener('click', updateProducts);
-      });
+      connectedCallback() {
+        this.formWrapper = this.querySelector('.ai-wholesale-form-wrapper-{{ ai_gen_id }}');
+        this.successPanel = this.querySelector('.ai-wholesale-success-{{ ai_gen_id }}');
 
-      if (form) {
-        form.addEventListener('submit', function() {
-          updateProducts();
-        });
+        if (this.successPanel && this.successPanel.classList.contains('active')) {
+          this.formWrapper.style.display = 'none';
+        }
       }
-
-      updateProducts();
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initWholesaleProducts_{{ ai_gen_id | replace: '-', '_' }});
-    } else {
-      initWholesaleProducts_{{ ai_gen_id | replace: '-', '_' }}();
-    }
-
-    document.addEventListener('shopify:section:load', function(e) {
-      if (e.detail && e.detail.sectionId === '{{ section.id }}') {
-        initWholesaleProducts_{{ ai_gen_id | replace: '-', '_' }}();
-      }
-    });
+    customElements.define('wholesale-enquiry-{{ ai_gen_id }}', WholesaleEnquiry{{ ai_gen_id }});
   })();
 </script>
 
