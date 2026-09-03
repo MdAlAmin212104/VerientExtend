@@ -1,0 +1,467 @@
+{% comment %}
+  Homepage Feature Overview & Technical Migration Showcase
+  Updated: 2026-09-04
+{% endcomment %}
+
+<div class="hp-features-section full-width">
+  <div class="hp-features-container">
+    <!-- Hero Header -->
+    <div class="hp-features-hero">
+      <div class="hp-badge">MAGENTO TO SHOPIFY MIGRATION ARCHITECTURE</div>
+      <h1 class="hp-title">VerientExtend Custom Theme Capabilities</h1>
+      <p class="hp-subtitle">
+        Welcome to the VerientExtend demonstration storefront. Below is an overview of the custom-engineered features, 
+        multi-step PDP configurator, customer-group B2B filtering, and integrations built into this theme.
+      </p>
+
+      <div class="hp-hero-actions">
+        <a href="{{ routes.all_products_collection_url }}" class="hp-btn hp-btn-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          Browse Products & Test Configurator
+        </a>
+        <a href="{{ routes.all_products_collection_url }}" class="hp-btn hp-btn-secondary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Test B2B Collection Filter
+        </a>
+      </div>
+    </div>
+
+    <!-- Interactive Configurator Step Pipeline Showcase -->
+    <div class="hp-pipeline-card">
+      <div class="hp-card-header">
+        <div class="hp-card-tag">FEATURE 1 HIGHLIGHT</div>
+        <h2>Multi-Step Range Hood Product Configurator (PDP)</h2>
+        <p>Solves complex Magento-style customizable product structures directly within Shopify storefront.</p>
+      </div>
+
+      <div class="hp-pipeline-steps">
+        <div class="hp-pipeline-step">
+          <div class="hp-step-num">01</div>
+          <div class="hp-step-title">Model & Color</div>
+          <div class="hp-step-desc">Finish, Sherwin-Williams code & base size selection.</div>
+        </div>
+        <div class="hp-pipeline-arrow">➔</div>
+        <div class="hp-pipeline-step">
+          <div class="hp-step-num">02</div>
+          <div class="hp-step-title">Ventilation</div>
+          <div class="hp-step-desc">Brand inserts (Broan, ZLine, Vent-A-Hood) & CFM options.</div>
+        </div>
+        <div class="hp-pipeline-arrow">➔</div>
+        <div class="hp-pipeline-step">
+          <div class="hp-step-num">03</div>
+          <div class="hp-step-title">Molding</div>
+          <div class="hp-step-desc">Trim style selection & Crown Molding add-ons.</div>
+        </div>
+        <div class="hp-pipeline-arrow">➔</div>
+        <div class="hp-pipeline-step">
+          <div class="hp-step-num">04</div>
+          <div class="hp-step-title">Size Mod</div>
+          <div class="hp-step-desc">Depth increase, height reduction & chimney extension.</div>
+        </div>
+        <div class="hp-pipeline-arrow">➔</div>
+        <div class="hp-pipeline-step">
+          <div class="hp-step-num">05</div>
+          <div class="hp-step-title">Order Options</div>
+          <div class="hp-step-desc">Rush manufacturing & live price calculation.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature Grid -->
+    <div class="hp-features-grid">
+      <!-- Task 1 -->
+      <div class="hp-feature-card">
+        <div class="hp-icon-box">🛠️</div>
+        <h3>1️⃣ PDP Multi-Step Configurator</h3>
+        <ul class="hp-feature-list">
+          <li><strong>Step-by-step UI:</strong> 5 guided steps with progress tracking & summary cards.</li>
+          <li><strong>Conditional Visibility:</strong> Fields auto-show/hide based on brand and size selections.</li>
+          <li><strong>Live Dynamic Price:</strong> Real-time total updating with price adders (e.g. +$260 Molding).</li>
+          <li><strong>Cart API Integration:</strong> Serialized line item properties passed to cart drawer & checkout.</li>
+        </ul>
+      </div>
+
+      <!-- Task 2 -->
+      <div class="hp-feature-card">
+        <div class="hp-icon-box">👥</div>
+        <h3>2️⃣ Customer-Group Collection Filtering</h3>
+        <ul class="hp-feature-list">
+          <li><strong>B2B Wholesale Logic:</strong> Products tagged <code>wholesale-only</code> are hidden from retail guests.</li>
+          <li><strong>Tag Verification:</strong> Visible exclusively when logged-in user possesses the <code>wholesale</code> tag.</li>
+          <li><strong>Native Liquid Implementation:</strong> Zero layout shift, secure server-side filtering.</li>
+        </ul>
+      </div>
+
+      <!-- Task 3 -->
+      <div class="hp-feature-card">
+        <div class="hp-icon-box">📢</div>
+        <h3>3️⃣ Rotating Announcement Bar</h3>
+        <ul class="hp-feature-list">
+          <li><strong>Multi-Slot Messages:</strong> Rotating banner slots configurable via Theme Editor.</li>
+          <li><strong>Session Dismiss:</strong> Dismiss button per slide stored in <code>sessionStorage</code>.</li>
+          <li><strong>Auto-Hide:</strong> Bar smoothly disappears when all announcements are dismissed.</li>
+        </ul>
+      </div>
+
+      <!-- Task 4 -->
+      <div class="hp-feature-card">
+        <div class="hp-icon-box">💬</div>
+        <h3>4️⃣ Tawk.to Live Chat Integration</h3>
+        <ul class="hp-feature-list">
+          <li><strong>Zero Performance Impact:</strong> Non-blocking asynchronous script loader.</li>
+          <li><strong>Theme Setting Toggle:</strong> Enable or disable from Theme Editor without modifying code.</li>
+        </ul>
+      </div>
+
+      <!-- Bonus 1 -->
+      <div class="hp-feature-card">
+        <div class="hp-icon-box">📦</div>
+        <h3>🎯 Expivi 3D Viewer & Vimeo Embed</h3>
+        <ul class="hp-feature-list">
+          <li><strong>3D Product Visualization:</strong> Expivi JS viewer embed for 3D model interaction on PDP.</li>
+          <li><strong>Vimeo Integration:</strong> Responsive Vimeo video player support without layout shift.</li>
+        </ul>
+      </div>
+
+      <!-- Bonus 2 -->
+      <div class="hp-feature-card">
+        <div class="hp-icon-box">📊</div>
+        <h3>🎯 Multi-Pixel Analytics Tracking</h3>
+        <ul class="hp-feature-list">
+          <li><strong>Comprehensive Pixels:</strong> GA4, Facebook Meta Pixel, TikTok Pixel, Pinterest Tag, Google Ads.</li>
+          <li><strong>Clean Architecture:</strong> Single modular snippet with custom event handlers.</li>
+        </ul>
+      </div>
+
+      <!-- Bonus 3 -->
+      <div class="hp-feature-card">
+        <div class="hp-icon-box">🔗</div>
+        <h3>🎯 Save & Share Cart</h3>
+        <ul class="hp-feature-list">
+          <li><strong>Shareable Cart Link:</strong> Generates direct URL payload for sharing custom order builds.</li>
+          <li><strong>B2B Collaboration:</strong> Allows wholesale buyers to submit draft carts to purchasing managers.</li>
+        </ul>
+      </div>
+
+      <!-- Purchase Flow -->
+      <div class="hp-feature-card">
+        <div class="hp-icon-box">🛒</div>
+        <h3>5️⃣ Verified Purchase & Cart Flow</h3>
+        <ul class="hp-feature-list">
+          <li><strong>Cart Drawer Summary:</strong> Full breakdown of configured properties visible in drawer.</li>
+          <li><strong>Checkout Ready:</strong> Tested end-to-end checkout flow creating valid Shopify Admin orders.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Quick Links Callout Banner -->
+    <div class="hp-callout-banner">
+      <div class="hp-callout-text">
+        <h3>Ready to test the custom functions?</h3>
+        <p>Click below to navigate to the store catalog, test product configurator options, and inspect the cart drawer.</p>
+      </div>
+      <div class="hp-callout-actions">
+        <a href="{{ routes.all_products_collection_url }}" class="hp-btn hp-btn-gold">View All Products</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .hp-features-section {
+    background-color: #f7f9f8;
+    color: #2f5d50;
+    padding: 60px 24px;
+    font-family: inherit;
+  }
+
+  .hp-features-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .hp-features-hero {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 50px auto;
+  }
+
+  .hp-badge {
+    display: inline-block;
+    background-color: #e8f0ec;
+    color: #2f5d50;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    padding: 6px 16px;
+    border-radius: 50px;
+    margin-bottom: 16px;
+    border: 1px solid #c5dbd2;
+  }
+
+  .hp-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: #1b3830;
+    margin-bottom: 16px;
+  }
+
+  .hp-subtitle {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #4a5568;
+    margin-bottom: 28px;
+  }
+
+  .hp-hero-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .hp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    font-weight: 700;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+  }
+
+  .hp-btn-primary {
+    background-color: #2f5d50;
+    color: #ffffff;
+  }
+
+  .hp-btn-primary:hover {
+    background-color: #23463c;
+    color: #ffffff;
+    transform: translateY(-2px);
+  }
+
+  .hp-btn-secondary {
+    background-color: #ffffff;
+    color: #2f5d50;
+    border: 2px solid #2f5d50;
+  }
+
+  .hp-btn-secondary:hover {
+    background-color: #e8f0ec;
+    transform: translateY(-2px);
+  }
+
+  .hp-btn-gold {
+    background-color: #d9a441;
+    color: #ffffff;
+  }
+
+  .hp-btn-gold:hover {
+    background-color: #c49132;
+    color: #ffffff;
+    transform: translateY(-2px);
+  }
+
+  /* Pipeline Card */
+  .hp-pipeline-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 36px;
+    margin-bottom: 48px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  }
+
+  .hp-card-header {
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .hp-card-tag {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #d9a441;
+    letter-spacing: 1.2px;
+    margin-bottom: 6px;
+  }
+
+  .hp-card-header h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1b3830;
+    margin-bottom: 8px;
+  }
+
+  .hp-card-header p {
+    color: #64748b;
+    font-size: 0.95rem;
+  }
+
+  .hp-pipeline-steps {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .hp-pipeline-step {
+    flex: 1;
+    min-width: 160px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 18px 14px;
+    text-align: center;
+    transition: border-color 0.2s ease;
+  }
+
+  .hp-pipeline-step:hover {
+    border-color: #2f5d50;
+  }
+
+  .hp-step-num {
+    display: inline-block;
+    background: #2f5d50;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+  }
+
+  .hp-step-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1b3830;
+    margin-bottom: 4px;
+  }
+
+  .hp-step-desc {
+    font-size: 0.8rem;
+    color: #64748b;
+    line-height: 1.3;
+  }
+
+  .hp-pipeline-arrow {
+    font-size: 1.2rem;
+    color: #cbd5e1;
+    font-weight: 700;
+  }
+
+  @media (max-width: 900px) {
+    .hp-pipeline-arrow {
+      display: none;
+    }
+  }
+
+  /* Grid */
+  .hp-features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .hp-feature-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .hp-feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  }
+
+  .hp-icon-box {
+    font-size: 2rem;
+    margin-bottom: 16px;
+  }
+
+  .hp-feature-card h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1b3830;
+    margin-bottom: 14px;
+    line-height: 1.3;
+  }
+
+  .hp-feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .hp-feature-list li {
+    font-size: 0.875rem;
+    color: #475569;
+    margin-bottom: 10px;
+    line-height: 1.4;
+    position: relative;
+    padding-left: 16px;
+  }
+
+  .hp-feature-list li::before {
+    content: "•";
+    color: #2f5d50;
+    font-size: 1.2rem;
+    position: absolute;
+    left: 0;
+    top: -2px;
+  }
+
+  .hp-feature-list code {
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #0f172a;
+  }
+
+  /* Callout Banner */
+  .hp-callout-banner {
+    background: linear-gradient(135deg, #1b3830 0%, #2f5d50 100%);
+    color: #ffffff;
+    border-radius: 16px;
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .hp-callout-text h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #ffffff;
+  }
+
+  .hp-callout-text p {
+    color: #cbd5e1;
+    font-size: 0.95rem;
+    margin: 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Homepage Features",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Homepage Features"
+    }
+  ]
+}
+{% endschema %}

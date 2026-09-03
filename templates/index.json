@@ -1,130 +1,115 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
-    "main": {
-      "type": "hello-world",
+    "features_showcase": {
+      "type": "homepage-features",
       "settings": {}
     },
-    "custom_form_bMQ9nB": {
+    "wholesale_enquiry": {
       "type": "custom-form",
       "blocks": {
-        "product_mMfNFb": {
-          "type": "product",
-          "settings": {
-            "label": "my product"
-          }
-        },
-        "business_type_mphFeg": {
+        "business_type_1": {
           "type": "business_type",
           "settings": {
             "label": "Restaurant"
           }
         },
-        "business_type_WExHkR": {
+        "business_type_2": {
           "type": "business_type",
           "settings": {
             "label": "Café"
           }
         },
-        "business_type_TYiHmW": {
+        "business_type_3": {
           "type": "business_type",
           "settings": {
             "label": "Hotel"
           }
         },
-        "business_type_hMWgzJ": {
+        "business_type_4": {
           "type": "business_type",
           "settings": {
             "label": "Retail Store"
           }
         },
-        "business_type_dTafnL": {
+        "business_type_5": {
           "type": "business_type",
           "settings": {
             "label": "Farm Shop"
           }
         },
-        "business_type_RidUQJ": {
+        "business_type_6": {
           "type": "business_type",
           "settings": {
             "label": "Catering Business"
           }
         },
-        "business_type_TqMLy4": {
+        "business_type_7": {
           "type": "business_type",
           "settings": {
             "label": "Other"
           }
         },
-        "product_W4dJQq": {
+        "product_1": {
           "type": "product",
           "settings": {
             "label": "Oyster Mushrooms"
           }
         },
-        "product_9yf7R3": {
+        "product_2": {
           "type": "product",
           "settings": {
             "label": "Shiitake"
           }
         },
-        "product_GdUiVn": {
+        "product_3": {
           "type": "product",
           "settings": {
             "label": "Lion's Mane"
           }
         },
-        "product_b6Rd7t": {
+        "product_4": {
           "type": "product",
           "settings": {
             "label": "Seasonal Varieties"
           }
         },
-        "product_HVJxGn": {
+        "product_5": {
           "type": "product",
           "settings": {
             "label": "Other / Not Sure"
           }
         },
-        "quantity_wTht4t": {
+        "quantity_1": {
           "type": "quantity",
           "settings": {
             "label": "Under 1 kg"
           }
         },
-        "quantity_EAJEUV": {
+        "quantity_2": {
           "type": "quantity",
           "settings": {
             "label": "1–5 kg"
           }
         },
-        "quantity_kbCpiL": {
+        "quantity_3": {
           "type": "quantity",
           "settings": {
             "label": "5–10 kg"
           }
         },
-        "quantity_zCV3iW": {
+        "quantity_4": {
           "type": "quantity",
           "settings": {
             "label": "10–25 kg"
           }
         },
-        "quantity_Vje6dP": {
+        "quantity_5": {
           "type": "quantity",
           "settings": {
             "label": "25 kg+"
           }
         },
-        "quantity_7VQBVD": {
+        "quantity_6": {
           "type": "quantity",
           "settings": {
             "label": "Not sure yet"
@@ -132,27 +117,25 @@
         }
       },
       "block_order": [
-        "product_mMfNFb",
-        "business_type_mphFeg",
-        "business_type_WExHkR",
-        "business_type_TYiHmW",
-        "business_type_hMWgzJ",
-        "business_type_dTafnL",
-        "business_type_RidUQJ",
-        "business_type_TqMLy4",
-        "product_W4dJQq",
-        "product_9yf7R3",
-        "product_GdUiVn",
-        "product_b6Rd7t",
-        "product_HVJxGn",
-        "quantity_wTht4t",
-        "quantity_EAJEUV",
-        "quantity_kbCpiL",
-        "quantity_zCV3iW",
-        "quantity_Vje6dP",
-        "quantity_7VQBVD"
+        "business_type_1",
+        "business_type_2",
+        "business_type_3",
+        "business_type_4",
+        "business_type_5",
+        "business_type_6",
+        "business_type_7",
+        "product_1",
+        "product_2",
+        "product_3",
+        "product_4",
+        "product_5",
+        "quantity_1",
+        "quantity_2",
+        "quantity_3",
+        "quantity_4",
+        "quantity_5",
+        "quantity_6"
       ],
-      "name": "B2B wholesale enquiry",
       "settings": {
         "section_padding_desktop": 60,
         "section_padding_mobile": 40,
@@ -189,7 +172,7 @@
     }
   },
   "order": [
-    "main",
-    "custom_form_bMQ9nB"
+    "features_showcase",
+    "wholesale_enquiry"
   ]
 }
