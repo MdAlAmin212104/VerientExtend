@@ -1,178 +1,20 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "features_showcase": {
       "type": "homepage-features",
       "settings": {}
-    },
-    "wholesale_enquiry": {
-      "type": "custom-form",
-      "blocks": {
-        "business_type_1": {
-          "type": "business_type",
-          "settings": {
-            "label": "Restaurant"
-          }
-        },
-        "business_type_2": {
-          "type": "business_type",
-          "settings": {
-            "label": "Café"
-          }
-        },
-        "business_type_3": {
-          "type": "business_type",
-          "settings": {
-            "label": "Hotel"
-          }
-        },
-        "business_type_4": {
-          "type": "business_type",
-          "settings": {
-            "label": "Retail Store"
-          }
-        },
-        "business_type_5": {
-          "type": "business_type",
-          "settings": {
-            "label": "Farm Shop"
-          }
-        },
-        "business_type_6": {
-          "type": "business_type",
-          "settings": {
-            "label": "Catering Business"
-          }
-        },
-        "business_type_7": {
-          "type": "business_type",
-          "settings": {
-            "label": "Other"
-          }
-        },
-        "product_1": {
-          "type": "product",
-          "settings": {
-            "label": "Oyster Mushrooms"
-          }
-        },
-        "product_2": {
-          "type": "product",
-          "settings": {
-            "label": "Shiitake"
-          }
-        },
-        "product_3": {
-          "type": "product",
-          "settings": {
-            "label": "Lion's Mane"
-          }
-        },
-        "product_4": {
-          "type": "product",
-          "settings": {
-            "label": "Seasonal Varieties"
-          }
-        },
-        "product_5": {
-          "type": "product",
-          "settings": {
-            "label": "Other / Not Sure"
-          }
-        },
-        "quantity_1": {
-          "type": "quantity",
-          "settings": {
-            "label": "Under 1 kg"
-          }
-        },
-        "quantity_2": {
-          "type": "quantity",
-          "settings": {
-            "label": "1–5 kg"
-          }
-        },
-        "quantity_3": {
-          "type": "quantity",
-          "settings": {
-            "label": "5–10 kg"
-          }
-        },
-        "quantity_4": {
-          "type": "quantity",
-          "settings": {
-            "label": "10–25 kg"
-          }
-        },
-        "quantity_5": {
-          "type": "quantity",
-          "settings": {
-            "label": "25 kg+"
-          }
-        },
-        "quantity_6": {
-          "type": "quantity",
-          "settings": {
-            "label": "Not sure yet"
-          }
-        }
-      },
-      "block_order": [
-        "business_type_1",
-        "business_type_2",
-        "business_type_3",
-        "business_type_4",
-        "business_type_5",
-        "business_type_6",
-        "business_type_7",
-        "product_1",
-        "product_2",
-        "product_3",
-        "product_4",
-        "product_5",
-        "quantity_1",
-        "quantity_2",
-        "quantity_3",
-        "quantity_4",
-        "quantity_5",
-        "quantity_6"
-      ],
-      "settings": {
-        "section_padding_desktop": 60,
-        "section_padding_mobile": 40,
-        "eyebrow": "TRADE ENQUIRY",
-        "heading": "Let's Talk Wholesale",
-        "intro_text": "Looking for a reliable local mushroom supplier? Tell us a little about your business and what you're looking for. We'll get back to you to discuss availability, delivery and ordering options.",
-        "trust_point_1": "Local cultivation",
-        "trust_point_2": "Fresh seasonal supply",
-        "trust_point_3": "Responsive support",
-        "form_heading": "Request a Trade Conversation",
-        "form_intro": "Complete the form below and we'll be in touch to discuss your requirements.",
-        "button_text": "Request a Trade Conversation",
-        "back_link": "",
-        "section_background": "#F3EDE2",
-        "form_background": "#FAFAFA",
-        "heading_color": "#2F5D50",
-        "text_color": "#4A4A4A",
-        "eyebrow_color": "#8B6F47",
-        "accent_color": "#D9A441",
-        "input_background": "#FAFAFA",
-        "input_text_color": "#2F5D50",
-        "input_border_color": "#2F5D50",
-        "placeholder_color": "#9CA3AF",
-        "button_background": "#D9A441",
-        "button_hover_background": "#C89335",
-        "button_text_color": "#FAFAFA",
-        "heading_size": 42,
-        "form_heading_size": 28,
-        "form_border_radius": 12,
-        "image_border_radius": 12,
-        "input_border_radius": 4,
-        "button_border_radius": 8
-      }
     }
   },
   "order": [
-    "features_showcase",
-    "wholesale_enquiry"
+    "features_showcase"
   ]
 }
